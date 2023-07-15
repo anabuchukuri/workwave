@@ -24,7 +24,7 @@
 
     public Boolean IsRemote { get; set; }
 
-    public int JobId { get; set; }
-    public Job Job { get; set; }
+    public int JobOpeningId { get; set; }
+    public JobOpening JobOpening { get; set; }
     }
 }

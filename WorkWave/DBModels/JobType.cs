@@ -6,6 +6,6 @@
 
         public string Name { get; set; }
 
-        public List<Job> Job { get; set; }
+        public List<JobOpening> JobOpenings { get; set; }
     }
 }

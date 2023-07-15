@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using WorkWave.DBModels;
 
 namespace WorkWave.DBModels
 {
-    public class Job
+    public class JobOpening
     {
-        public int JobId { get; set; }
+        public int JobOpeningId { get; set; }
 
         public string Title { get; set; }
 
@@ -18,17 +19,10 @@ namespace WorkWave.DBModels
 
         public bool IsActive { get; set; }
 
-        public DateTime CreationDate1 { get; set; }
-
-        public int CategoryId { get; set; }
-        public  JobCategory Category { get; set; }
+        public DateTime CreationDate { get; set; }
 
         public int EmployerId { get; set; }
         public  Employer Employer { get; set; }
-
-        public User Author { get; set; }
-
-        public string AuthorId { get; set; }
 
         public JobType JobType { get; set; }
 
@@ -37,5 +31,11 @@ namespace WorkWave.DBModels
         public int JobDetailsId { get; set; }
 
         public JobDetails JobDetails { get; set; }
+
+        public List<OpeningCategory> OpeningCategories { get; set; }
+        public List<JobApplication> JobApplications { get; set; }
     }
 }
+
+
+
