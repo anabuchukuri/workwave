@@ -18,7 +18,7 @@ namespace WorkWave.DBModels
 
         public bool IsActive { get; set; }
 
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate1 { get; set; }
 
         public int CategoryId { get; set; }
         public  JobCategory Category { get; set; }
