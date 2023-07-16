@@ -9,8 +9,8 @@ namespace WorkWave.DBModels
         public DateTime ApplicationDate { get; set; }
         public string CoverLetter { get; set; }
         public int JobSeekerId { get; set; }
-        public  JobSeeker JobSeeker { get; set; }
+        public JobSeeker JobSeeker { get; set; }
         public int JobOpeningId { get; set; }
-        public  JobOpening JobOpening { get; set; }
+        public JobOpening JobOpening { get; set; }
     }
 }

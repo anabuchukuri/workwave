@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WorkWave.DbModels;
+using WorkWave.Dtos;
+using WorkWave.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(); 
+builder.Services.AddScoped<JobOpeningService>();
+builder.Services.AddScoped<JobTypeService>();
+builder.Services.AddScoped<JobCategoryService>();
+
 builder.Services.AddDbContext<WorkwaveContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

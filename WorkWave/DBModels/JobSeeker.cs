@@ -15,8 +15,8 @@ namespace WorkWave.DBModels
         public string Experience { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int UserId { get; set; }
-        public  User User { get; set; }
-        public  List<JobApplication> JobApplications { get; set; }
+        public User User { get; set; }
+        public List<JobApplication> JobApplications { get; set; }
 
     }
 }

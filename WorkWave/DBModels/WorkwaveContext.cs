@@ -10,6 +10,7 @@ namespace WorkWave.DbModels;
 public partial class WorkwaveContext : DbContext
 {
     public virtual DbSet<JobOpening> JobOpening { get; set; }
+    public virtual DbSet<User> User { get; set; }
     public virtual DbSet<JobCategory> JobCategory { get; set; }
     public virtual DbSet<OpeningCategory> OpeningCategory { get; set; }
     public virtual DbSet<JobType> JobType { get; set; }
@@ -55,27 +56,28 @@ public partial class WorkwaveContext : DbContext
         builder.Property(j => j.Salary).IsRequired();*/
         builder.Property(j => j.IsActive).IsRequired();
         builder.Property(j => j.CreationDate).IsRequired();
+        builder.Property(jo => jo.Salary)
+              .HasColumnType("decimal(18, 2)");
 
         builder.HasOne(jo => jo.Employer)
                 .WithMany(e => e.JobOpenings)
-                .HasForeignKey(jo => jo.EmployerId);
+                .HasForeignKey(jo => jo.EmployerId).IsRequired(false);
 
         builder.HasOne(jo => jo.JobType)
             .WithMany(jt => jt.JobOpenings)
-            .HasForeignKey(jo => jo.JobTypeId);
+            .HasForeignKey(jo => jo.JobTypeId).IsRequired(false);
 
         builder.HasOne(jo => jo.JobDetails)
             .WithOne(jd => jd.JobOpening)
-            .HasForeignKey<JobDetails>(jd => jd.JobDetailsId);
+            .HasForeignKey<JobDetails>(jd => jd.JobDetailsId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(jo => jo.OpeningCategories)
             .WithOne(oc => oc.JobOpening)
-            .HasForeignKey(oc => oc.JobOpeningId);
+            .HasForeignKey(oc => oc.JobOpeningId).IsRequired(false);
 
         builder.HasMany(jo => jo.JobApplications)
             .WithOne(ja => ja.JobOpening)
-            .HasForeignKey(ja => ja.JobOpeningId);
-
+            .HasForeignKey(ja => ja.JobOpeningId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
     }
 
 
@@ -96,7 +98,7 @@ public partial class WorkwaveContext : DbContext
 
         builder.HasOne(jd => jd.JobOpening)
             .WithOne(jo => jo.JobDetails)
-            .HasForeignKey<JobDetails>(jd => jd.JobOpeningId);
+            .HasForeignKey<JobDetails>(jd => jd.JobOpeningId).OnDelete(DeleteBehavior.Restrict);
     }
 
     private void ConfigureJobCategory(EntityTypeBuilder<JobCategory> builder)
@@ -132,11 +134,11 @@ public partial class WorkwaveContext : DbContext
 
         builder.HasOne(ja => ja.JobSeeker)
             .WithMany(js => js.JobApplications)
-            .HasForeignKey(ja => ja.JobSeekerId);
+            .HasForeignKey(ja => ja.JobSeekerId).OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(ja => ja.JobOpening)
             .WithMany(jo => jo.JobApplications)
-            .HasForeignKey(ja => ja.JobOpeningId);
+            .HasForeignKey(ja => ja.JobOpeningId).OnDelete(DeleteBehavior.Restrict);
     }
 
     private void ConfigureOpeningCategory(EntityTypeBuilder<OpeningCategory> builder)
@@ -170,7 +172,7 @@ public partial class WorkwaveContext : DbContext
 
         builder.HasMany(js => js.JobApplications)
             .WithOne(ja => ja.JobSeeker)
-            .HasForeignKey(ja => ja.JobSeekerId);
+            .HasForeignKey(ja => ja.JobSeekerId).OnDelete(DeleteBehavior.Restrict);
     }
 
     private void ConfigureEmployer(EntityTypeBuilder<Employer> builder)
@@ -205,7 +207,7 @@ public partial class WorkwaveContext : DbContext
         builder.HasKey(u => u.UserId);
         builder.Property(u => u.Username)
             .HasMaxLength(50)
-            .IsRequired(); 
+            .IsRequired();
 
         builder.Property(u => u.Password)
             .HasMaxLength(100)
@@ -213,10 +215,10 @@ public partial class WorkwaveContext : DbContext
 
         builder.Property(u => u.Email)
             .HasMaxLength(100)
-            .IsRequired(); 
+            .IsRequired();
 
         builder.Property(u => u.FirstName)
-            .HasMaxLength(50); 
+            .HasMaxLength(50);
 
         builder.Property(u => u.LastName)
             .HasMaxLength(50);

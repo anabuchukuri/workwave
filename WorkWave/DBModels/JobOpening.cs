@@ -21,19 +21,19 @@ namespace WorkWave.DBModels
 
         public DateTime CreationDate { get; set; }
 
-        public int EmployerId { get; set; }
-        public  Employer Employer { get; set; }
+        public int? EmployerId { get; set; }
+        public  Employer? Employer { get; set; }
 
-        public JobType JobType { get; set; }
+        public JobType? JobType { get; set; }
 
-        public string JobTypeId { get; set; }
+        public int? JobTypeId { get; set; }
 
-        public int JobDetailsId { get; set; }
+        public int? JobDetailsId { get; set; }
 
-        public JobDetails JobDetails { get; set; }
+        public JobDetails? JobDetails { get; set; }
 
-        public List<OpeningCategory> OpeningCategories { get; set; }
-        public List<JobApplication> JobApplications { get; set; }
+        public List<OpeningCategory>? OpeningCategories { get; set; }
+        public List<JobApplication>? JobApplications { get; set; }
     }
 }
 
