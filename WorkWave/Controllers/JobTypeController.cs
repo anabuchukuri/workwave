@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobOpeningDtos;
+using WorkWave.Dtos.JobTypeDtos;
 using WorkWave.Services;
 using WorkWave.Services.Abstracts;
 

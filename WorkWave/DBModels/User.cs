@@ -1,14 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace WorkWave.DBModels
 {
-    public class User
+    public class User: IdentityUser<int>
     {
-        public int UserId { get; set; }
-
-        public string Username { get; set; }
-
-        public string Password { get; set; }
+        public int Id { get; set; }
 
         public string Email { get; set; }
 
@@ -17,8 +14,16 @@ namespace WorkWave.DBModels
         public string LastName { get; set; }
         public string Role { get; set; }
 
-        public Employer EmployerProfile { get; set; }
+        public int? EmployerId { get; set; }
+        public int? JobSeekerId { get; set; }
 
-        public JobSeeker JobSeekerProfile { get; set; }
+        public Employer? EmployerProfile { get; set; }
+
+        public JobSeeker? JobSeekerProfile { get; set; }
+    }
+
+    public class Role : IdentityRole<int>
+    {
+        // Your custom role properties
     }
 }

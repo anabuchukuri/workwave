@@ -1,6 +1,6 @@
 ﻿using WorkWave.DBModels;
 
-namespace WorkWave.Dtos.JobOpeningDtos
+namespace WorkWave.Dtos.JobCategoryDtos
 {
     public class JobCategoryAddDto
     {

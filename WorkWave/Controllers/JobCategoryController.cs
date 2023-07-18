@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
+using WorkWave.Dtos.JobCategoryDtos;
 using WorkWave.Dtos.JobOpeningDtos;
 using WorkWave.Services;
 using WorkWave.Services.Abstracts;

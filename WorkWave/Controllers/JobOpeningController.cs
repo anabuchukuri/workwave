@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkWave.DbModels;
@@ -27,6 +28,7 @@ namespace WorkWave.Controllers
         }
 
         // GET: api/<JobOpeningController>
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<JobOpeningDto>>> GetAll()
         {

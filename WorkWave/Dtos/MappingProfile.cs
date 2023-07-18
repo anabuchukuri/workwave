@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using WorkWave.DBModels;
+using WorkWave.Dtos.JobCategoryDtos;
 using WorkWave.Dtos.JobOpeningDtos;
+using WorkWave.Dtos.JobTypeDtos;
+using WorkWave.Dtos.UserDtos;
 
 namespace WorkWave.Dtos
 {
@@ -28,6 +31,13 @@ namespace WorkWave.Dtos
 
             CreateMap<JobCategory, JobCategoryAddDto>();
             CreateMap<JobCategoryAddDto, JobCategory>();
+
+            /*User*/
+            CreateMap<User, UserRegistrationDto>();
+            CreateMap<UserRegistrationDto, User>();
+
+            CreateMap<User, UserLoginDto>();
+            CreateMap<UserLoginDto, User>();
         }
     }
 }

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WorkWave.DBModels;
 
 namespace WorkWave.DbModels;
 
-public partial class WorkwaveContext : DbContext
+public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 {
     public virtual DbSet<JobOpening> JobOpening { get; set; }
     public virtual DbSet<User> User { get; set; }
@@ -19,14 +21,11 @@ public partial class WorkwaveContext : DbContext
     public virtual DbSet<JobSeeker> JobSeeker { get; set; }
     public virtual DbSet<Employer> Employer { get; set; }
    
-    public WorkwaveContext()
-    {
-
-    }
 
     public WorkwaveContext(DbContextOptions<WorkwaveContext> options)
         : base(options)
     {
+       
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,7 +33,7 @@ public partial class WorkwaveContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<JobOpening>(ConfigureJobOpening);
         modelBuilder.Entity<JobDetails>(ConfigureJobDetails);
         modelBuilder.Entity<JobCategory>(ConfigureJobCategory);
@@ -168,7 +167,7 @@ public partial class WorkwaveContext : DbContext
 
         builder.HasOne(js => js.User)
             .WithOne(u => u.JobSeekerProfile)
-            .HasForeignKey<JobSeeker>(js => js.UserId);
+            .HasForeignKey<JobSeeker>(js => js.JobSeekerId);
 
         builder.HasMany(js => js.JobApplications)
             .WithOne(ja => ja.JobSeeker)
@@ -195,7 +194,7 @@ public partial class WorkwaveContext : DbContext
 
         builder.HasOne(e => e.User)
             .WithOne(u => u.EmployerProfile)
-            .HasForeignKey<Employer>(e => e.UserId);
+            .HasForeignKey<Employer>(e => e.EmployerId);
 
         builder.HasMany(e => e.JobOpenings)
             .WithOne(jo => jo.Employer)
@@ -204,14 +203,15 @@ public partial class WorkwaveContext : DbContext
 
     private void ConfigureUser(EntityTypeBuilder<User> builder)
     {
-        builder.HasKey(u => u.UserId);
+        builder.HasKey(u => u.Id);
+        /*
         builder.Property(u => u.Username)
             .HasMaxLength(50)
-            .IsRequired();
+            .IsRequired();*/
 
-        builder.Property(u => u.Password)
+        /*builder.Property(u => u.Password)
             .HasMaxLength(100)
-            .IsRequired();
+            .IsRequired();*/
 
         builder.Property(u => u.Email)
             .HasMaxLength(100)
