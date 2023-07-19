@@ -51,7 +51,7 @@ namespace WorkWave.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginDto model)
+        public async Task<ActionResult> Login(UserLoginDto model)
         {
             var user = await _service.Login(model.Username, model.Password, model.rememberme);
             if (user == null)
@@ -59,29 +59,7 @@ namespace WorkWave.Controllers
                 return Unauthorized();
             }
 
-            var token = GenerateJwtToken(user);
-
-            return Ok(new { Token = token });
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-               /* claims: claims,*/
-                expires: DateTime.UtcNow.AddDays(7), 
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return Ok(user.UserName);
         }
     }
 }

@@ -21,9 +21,4 @@ namespace WorkWave.DBModels
 
         public JobSeeker? JobSeekerProfile { get; set; }
     }
-
-    public class Role : IdentityRole<int>
-    {
-        // Your custom role properties
-    }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkWave.DbModels;
 
@@ -11,9 +12,11 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    partial class WorkwaveContextModelSnapshot : ModelSnapshot
+    [Migration("20230719180354_addRoles")]
+    partial class addRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,7 +164,7 @@ namespace WorkWave.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Employer", (string)null);
+                    b.ToTable("Employer");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobApplication", b =>
@@ -192,7 +195,7 @@ namespace WorkWave.Migrations
 
                     b.HasIndex("JobSeekerId");
 
-                    b.ToTable("JobApplication", (string)null);
+                    b.ToTable("JobApplication");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobCategory", b =>
@@ -209,7 +212,7 @@ namespace WorkWave.Migrations
 
                     b.HasKey("JobCategoryId");
 
-                    b.ToTable("JobCategory", (string)null);
+                    b.ToTable("JobCategory");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobDetails", b =>
@@ -263,7 +266,7 @@ namespace WorkWave.Migrations
                     b.HasIndex("JobOpeningId")
                         .IsUnique();
 
-                    b.ToTable("JobDetails", (string)null);
+                    b.ToTable("JobDetails");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobOpening", b =>
@@ -310,7 +313,7 @@ namespace WorkWave.Migrations
 
                     b.HasIndex("JobTypeId");
 
-                    b.ToTable("JobOpening", (string)null);
+                    b.ToTable("JobOpening");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobSeeker", b =>
@@ -359,7 +362,7 @@ namespace WorkWave.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("JobSeeker", (string)null);
+                    b.ToTable("JobSeeker");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobType", b =>
@@ -376,7 +379,7 @@ namespace WorkWave.Migrations
 
                     b.HasKey("JobTypeId");
 
-                    b.ToTable("JobType", (string)null);
+                    b.ToTable("JobType");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.OpeningCategory", b =>
@@ -391,7 +394,7 @@ namespace WorkWave.Migrations
 
                     b.HasIndex("JobCategoryId");
 
-                    b.ToTable("OpeningCategory", (string)null);
+                    b.ToTable("OpeningCategory");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.Role", b =>
@@ -514,6 +517,21 @@ namespace WorkWave.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("WorkWave.DBModels.UserRole", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -649,6 +667,25 @@ namespace WorkWave.Migrations
                     b.Navigation("JobOpening");
                 });
 
+            modelBuilder.Entity("WorkWave.DBModels.UserRole", b =>
+                {
+                    b.HasOne("WorkWave.DBModels.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkWave.DBModels.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WorkWave.DBModels.Employer", b =>
                 {
                     b.Navigation("JobOpenings");
@@ -678,11 +715,18 @@ namespace WorkWave.Migrations
                     b.Navigation("JobOpenings");
                 });
 
+            modelBuilder.Entity("WorkWave.DBModels.Role", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("WorkWave.DBModels.User", b =>
                 {
                     b.Navigation("EmployerProfile");
 
                     b.Navigation("JobSeekerProfile");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

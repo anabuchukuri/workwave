@@ -12,8 +12,8 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    [Migration("20230716215116_recreate")]
-    partial class recreate
+    [Migration("20230719180907_removeuserrole")]
+    partial class removeuserrole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -399,15 +399,18 @@ namespace WorkWave.Migrations
 
             modelBuilder.Entity("WorkWave.DBModels.Role", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -417,7 +420,7 @@ namespace WorkWave.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("Id");
+                    b.HasKey("RoleId");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()

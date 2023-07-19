@@ -47,13 +47,14 @@ namespace WorkWave.Services
         public async Task<User> Login(string userName, string password, bool rememberMe)
         {
             var user = await _userManager.FindByNameAsync(userName);
-            var result = await _userManager.CheckPasswordAsync(user, password);
-            return (user!=null && result) ? user : null;
+            var result=await _signInManager.PasswordSignInAsync(userName, password, rememberMe, false);
+            return result.Succeeded? user:null;
         }
 
-        public Task<bool> Logout()
+        public async Task<bool> Logout()
         {
-            throw new NotImplementedException();
+            await _signInManager.SignOutAsync();
+            return true;
         }
 
         public async Task<IdentityResult> Register(User user, string password, bool signIn = true)

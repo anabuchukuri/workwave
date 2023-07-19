@@ -38,6 +38,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+builder.Services.AddScoped<UserClaimsPrincipalFactory<User>, UserClaimsPrincipalFactory<User, Role>>();
+
 
 builder.Services.AddIdentity<User, Role>(options =>
 {

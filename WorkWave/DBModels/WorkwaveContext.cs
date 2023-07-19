@@ -20,8 +20,8 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
     public virtual DbSet<JobApplication> JobApplication { get; set; }
     public virtual DbSet<JobSeeker> JobSeeker { get; set; }
     public virtual DbSet<Employer> Employer { get; set; }
-   
 
+    public DbSet<Role> Roles { get; set; }
     public WorkwaveContext(DbContextOptions<WorkwaveContext> options)
         : base(options)
     {
@@ -43,6 +43,7 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<JobSeeker>(ConfigureJobSeeker);
         modelBuilder.Entity<Employer>(ConfigureEmployer);
         modelBuilder.Entity<User>(ConfigureUser);
+        modelBuilder.Entity<Role>(ConfigureRole);
     }
 
     private void ConfigureJobOpening(EntityTypeBuilder<JobOpening> builder)
@@ -230,6 +231,11 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         builder.HasOne(u => u.JobSeekerProfile)
             .WithOne(js => js.User)
             .HasForeignKey<JobSeeker>(js => js.UserId);
+    }
+
+    private void ConfigureRole(EntityTypeBuilder<Role> builder)
+    {
+        builder.HasKey(r => r.RoleId);
     }
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
