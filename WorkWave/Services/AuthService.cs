@@ -17,8 +17,9 @@ namespace WorkWave.Services
             
         }
 
-        public async Task<IdentityResult> ChangePassword(string userName, string OldPassword, string NewPassword)
+        public async Task<IdentityResult> ChangePassword(ClaimsPrincipal userPrincipal, string userName, string OldPassword, string NewPassword)
         {
+            userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
@@ -39,10 +40,10 @@ namespace WorkWave.Services
             return await _userManager.GetUserAsync(claimsUser);
         }
 
-        public async Task<User> Login(string userName, string password, bool rememberMe)
+        public async Task<User> Login(string userName, string password)
         {
             var user = await _userManager.FindByNameAsync(userName);
-            var result=await _signInManager.PasswordSignInAsync(userName, password, rememberMe, false);
+            var result=await _signInManager.PasswordSignInAsync(userName, password, false, false);
             return result.Succeeded? user:null;
         }
 

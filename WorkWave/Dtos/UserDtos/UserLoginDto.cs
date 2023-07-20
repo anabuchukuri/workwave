@@ -7,7 +7,5 @@ namespace WorkWave.Dtos.UserDtos
         public string Username { get; set; }
 
         public string Password { get; set; }
-
-        public Boolean rememberme { get; set; }
     }
 }

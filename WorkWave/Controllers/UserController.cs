@@ -52,8 +52,8 @@ namespace WorkWave.Controllers
                 await _roleService.AddRoleToUser(newUser, newUser.Role);
                 if (user.Succeeded)
                 {
-                    return Ok("Registration successful.");
-                }
+                    return Ok("Employer user added");
+            }
                 else
                 {
                     return BadRequest(user.Errors);
@@ -72,22 +72,68 @@ namespace WorkWave.Controllers
             await _roleService.AddRoleToUser(newUser, newUser.Role);
             if (user.Succeeded)
             {
-                return Ok("Registration successful.");
+                return Ok("user JobSeeker added"); 
             }
             else  return BadRequest(user.Errors);
 
         }
 
+        [HttpPost("registerUser")]
+        public async Task<ActionResult> RegisterUser(UserRegistrationDto model, string Role)
+        {
+            User newUser = _mapper.Map<User>(model);
+            var roleExist= await _roleService.RoleExistsAsync(Role);
+            if(!roleExist) { return BadRequest("Role doesn't exist"); }
+            newUser.Role = Role;
+            var user = await _service.CreateUser(newUser, model.Password);
+            await _roleService.AddRoleToUser(newUser, Role);
+            if (user.Succeeded)
+            {
+                return Ok("user added");
+            }
+            else return BadRequest(user.Errors);
+
+        }
+
+        [HttpPost("changePassword")]
+        public async Task<IdentityResult> ChangePassword(ClaimsPrincipal userPrincipal,UserChangePasswordDto model)
+        {
+           return await _service.ChangePassword(userPrincipal, model.Username, model.OldPassword, model.NewPassword);
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserLoginDto model)
         {
-            var user = await _service.Login(model.Username, model.Password, model.rememberme);
+            var user = await _service.Login(model.Username, model.Password);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            return Ok(user.UserName);
+            return GenerateToken(user);
+        }
+
+        private ObjectResult GenerateToken(User user)
+        {
+            var claims = new List<Claim>
+                  {
+                      new Claim(ClaimTypes.Name, user.UserName),
+                      new Claim(ClaimTypes.NameIdentifier, ""+user.Id),
+                      new Claim(ClaimTypes.Role, user.Role)
+                  };
+            var i = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value)),
+                    SecurityAlgorithms.HmacSha256Signature),
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return Ok(new { Token = tokenHandler.WriteToken(token) });
         }
     }
 }

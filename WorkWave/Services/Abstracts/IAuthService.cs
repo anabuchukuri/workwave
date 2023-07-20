@@ -8,9 +8,9 @@ namespace WorkWave.Services.Abstracts
     {
             Task<IdentityResult> CreateUser(User user, string password);
             Task<bool> Logout();
-            Task<User> Login(string userName, string password, bool rememberMe);
+            Task<User> Login(string userName, string password);
             Task<User> GetCurrentUser(ClaimsPrincipal claimsUser);
-            Task<IdentityResult> ChangePassword(string userName, string OldPassword, string NewPassword);
+            Task<IdentityResult> ChangePassword(ClaimsPrincipal userPrincipal, string userName, string OldPassword, string NewPassword);
 
     }
 }

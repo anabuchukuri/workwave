@@ -32,10 +32,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
+        ValidateIssuer = false,
         ValidateAudience = false,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("appSettings:Token").Value))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value))
     };
 });
 
@@ -48,7 +48,7 @@ builder.Services.AddIdentity<User, Role>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
-}).AddEntityFrameworkStores<WorkwaveContext>()
+}).AddRoles<Role>().AddEntityFrameworkStores<WorkwaveContext>()
     .AddDefaultTokenProviders();
 
 
@@ -91,7 +91,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
