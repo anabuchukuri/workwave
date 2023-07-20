@@ -7,10 +7,12 @@ namespace WorkWave.Services
     public class RoleService : IRoleService
     {
         private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<User> _userManager;
 
-        public RoleService(RoleManager<Role> roleManager)
+        public RoleService(RoleManager<Role> roleManager, UserManager<User> userManager)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
         public async Task<IdentityResult> CreateRoleAsync(string roleName)
         {
@@ -37,13 +39,41 @@ namespace WorkWave.Services
             return await Task.FromResult(_roleManager.Roles.Select(r => r.Name).ToList());
         }
 
-        /*public async Task<List<User>> GetUsersInRoleAsync(string roleName)
+        public async Task<List<User>> GetUsersInRoleAsync(string roleName)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
             if (role == null)
-                return new List<User>();
+            {
+                throw new Exception("Role not found.");
+            }
 
-            return await Task.FromResult(_roleManager.Roles.ToList());
-        }*/
+            var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+            return usersInRole.ToList();
+
+        }
+
+        public async Task<bool> RemoveRolesFromUser(User user, List<string> roleNames)
+        {
+            var result = await _userManager.RemoveFromRolesAsync(user, roleNames);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> AddRoleToUser(User user, string roleName)
+        {
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+            return result.Succeeded;
+        }
+
+        public async Task<List<string>> GetUserRoles(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList();
+        }
+
+        public async Task<bool> UserHasRole(User user, string roleName)
+        {
+            var isInRole = await _userManager.IsInRoleAsync(user, roleName);
+            return isInRole;
+        }
     }
 }

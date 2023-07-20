@@ -22,6 +22,7 @@ builder.Services.AddScoped<JobOpeningService>();
 builder.Services.AddScoped<JobTypeService>();
 builder.Services.AddScoped<JobCategoryService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<RoleService>();
 
 builder.Services.AddDbContext<WorkwaveContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

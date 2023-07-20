@@ -8,12 +8,10 @@ namespace WorkWave.DBModels
         public int EmployerId { get; set; }
 
         public string CompanyName { get; set; }
-
-        public string Website { get; set; }
-
         public string ContactNumber { get; set; }
 
-        public string Address { get; set; }
+        public string? Website { get; set; }
+        public string? Address { get; set; }
 
         public int UserId { get; set; }
 

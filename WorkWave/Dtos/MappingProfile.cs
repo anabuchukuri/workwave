@@ -38,6 +38,20 @@ namespace WorkWave.Dtos
 
             CreateMap<User, UserLoginDto>();
             CreateMap<UserLoginDto, User>();
+
+            CreateMap<User, EmployerRegistrationDto>();
+            CreateMap<EmployerRegistrationDto, User>();
+
+            CreateMap<User, JobSeekerRegistrationDto>();
+            CreateMap<JobSeekerRegistrationDto, User>();
+
+            /*Employer*/
+            CreateMap<Employer, EmployerRegistrationDto>();
+            CreateMap<EmployerRegistrationDto, Employer>();
+
+            /*JobSeeker*/
+            CreateMap<Employer, JobSeekerRegistrationDto>();
+            CreateMap<JobSeekerRegistrationDto, Employer>();
         }
     }
 }

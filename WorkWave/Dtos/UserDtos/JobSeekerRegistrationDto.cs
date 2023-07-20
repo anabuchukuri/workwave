@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using WorkWave.DBModels;
 
-namespace WorkWave.DBModels
+namespace WorkWave.Dtos.UserDtos
 {
-    public class JobSeeker
+    public class JobSeekerRegistrationDto : UserRegistrationDto
     {
         public string FirstName { get; set; }
+
         public string LastName { get; set; }
-        public int JobSeekerId { get; set; }
+
         public string? ResumeUrl { get; set; }
         public string? LinkedInProfile { get; set; }
         public string? GithubProfile { get; set; }
@@ -16,9 +15,7 @@ namespace WorkWave.DBModels
         public string? Education { get; set; }
         public string? Experience { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
-        public List<JobApplication> JobApplications { get; set; }
+
 
     }
 }

@@ -9,6 +9,10 @@ namespace WorkWave.Services.Abstracts
         Task<IdentityResult> DeleteRoleAsync(string roleName);
         Task<bool> RoleExistsAsync(string roleName);
         Task<List<string>> GetAllRolesAsync();
-       /* Task<List<User>> GetUsersInRoleAsync(string roleName);*/
+        Task<List<User>> GetUsersInRoleAsync(string roleName);
+        Task<bool> RemoveRolesFromUser(User user, List<string> roleNames);
+        Task<bool> AddRoleToUser(User user, string roleName);
+        Task<List<string>> GetUserRoles(User user);
+        Task<bool> UserHasRole(User user, string roleName);
     }
 }

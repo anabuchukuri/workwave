@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using WorkWave.Constants;
+using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobOpeningDtos;
 using WorkWave.Dtos.JobTypeDtos;
@@ -21,33 +24,58 @@ namespace WorkWave.Controllers
     public class UserController : ControllerBase
     {
         private readonly AuthService _service;
+        private readonly RoleService _roleService;
         private readonly IMapper _mapper; 
         private readonly IConfiguration _configuration;
-        
-        /*private readonly WorkwaveContext _context;*/
 
-        public UserController(AuthService authService, IMapper mapper, IConfiguration configuration)
+        private readonly WorkwaveContext _context;
+
+        public UserController(WorkwaveContext context, AuthService authService, RoleService roleService, IMapper mapper, IConfiguration configuration)
         {
+            _context = context;
             _service = authService;
+            _roleService = roleService;
             _mapper = mapper;
             _configuration = configuration;
         }
 
 
-        [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegistrationDto model)
+        [HttpPost("registerEmployer")]
+        public async Task<ActionResult> RegisterEmployer(EmployerRegistrationDto model)
         {
-            var user = _mapper.Map<User>(model);
-            var result = await _service.Register(user, model.Password);
+      
+                User newUser = _mapper.Map<User>(model);
+                Employer employer = _mapper.Map<Employer>(model);
+                newUser.Role = RoleName.Employer;
+                newUser.EmployerProfile = employer;
+                var user = await _service.CreateUser(newUser, model.Password);
+                await _roleService.AddRoleToUser(newUser, newUser.Role);
+                if (user.Succeeded)
+                {
+                    return Ok("Registration successful.");
+                }
+                else
+                {
+                    return BadRequest(user.Errors);
+                }
             
-            if (result.Succeeded)
+        }
+
+        [HttpPost("registerJobSeeker")]
+        public async Task<ActionResult> RegisterJobSeeker(JobSeekerRegistrationDto model)
+        {
+            User newUser = _mapper.Map<User>(model);
+            JobSeeker jobSeeker = _mapper.Map<JobSeeker>(model);
+            newUser.Role = RoleName.Employer;
+            newUser.JobSeekerProfile = jobSeeker;
+            var user = await _service.CreateUser(newUser, model.Password);
+            await _roleService.AddRoleToUser(newUser, newUser.Role);
+            if (user.Succeeded)
             {
                 return Ok("Registration successful.");
             }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
+            else  return BadRequest(user.Errors);
+
         }
 
         [HttpPost("login")]

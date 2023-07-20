@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WorkWave.Migrations
 {
     /// <inheritdoc />
-    public partial class addRoles : Migration
+    public partial class fixForeignKey : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,47 +15,32 @@ namespace WorkWave.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.RoleId);
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Employer",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    EmployerId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmployerId = table.Column<int>(type: "int", nullable: true),
-                    JobSeekerId = table.Column<int>(type: "int", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    CompanyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ContactNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Website = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_Employer", x => x.EmployerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,8 +86,73 @@ namespace WorkWave.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "RoleId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmployerId = table.Column<int>(type: "int", nullable: true),
+                    JobSeekerId = table.Column<int>(type: "int", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Employer_Id",
+                        column: x => x.Id,
+                        principalTable: "Employer",
+                        principalColumn: "EmployerId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobOpening",
+                columns: table => new
+                {
+                    JobOpeningId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EmployerId = table.Column<int>(type: "int", nullable: true),
+                    JobTypeId = table.Column<int>(type: "int", nullable: true),
+                    JobDetailsId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobOpening", x => x.JobOpeningId);
+                    table.ForeignKey(
+                        name: "FK_JobOpening_Employer_EmployerId",
+                        column: x => x.EmployerId,
+                        principalTable: "Employer",
+                        principalColumn: "EmployerId");
+                    table.ForeignKey(
+                        name: "FK_JobOpening_JobType_JobTypeId",
+                        column: x => x.JobTypeId,
+                        principalTable: "JobType",
+                        principalColumn: "JobTypeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -160,7 +210,7 @@ namespace WorkWave.Migrations
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "RoleId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
@@ -191,135 +241,30 @@ namespace WorkWave.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employer",
-                columns: table => new
-                {
-                    EmployerId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Website = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    ContactNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employer", x => x.EmployerId);
-                    table.ForeignKey(
-                        name: "FK_Employer_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "JobSeeker",
                 columns: table => new
                 {
-                    JobSeekerId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ResumeUrl = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    LinkedInProfile = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GithubProfile = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Skills = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Education = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Experience = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    JobSeekerId = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ResumeUrl = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    LinkedInProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GithubProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Skills = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Education = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    Experience = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_JobSeeker", x => x.JobSeekerId);
                     table.ForeignKey(
-                        name: "FK_JobSeeker_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_UserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "RoleId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "JobOpening",
-                columns: table => new
-                {
-                    JobOpeningId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EmployerId = table.Column<int>(type: "int", nullable: true),
-                    JobTypeId = table.Column<int>(type: "int", nullable: true),
-                    JobDetailsId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JobOpening", x => x.JobOpeningId);
-                    table.ForeignKey(
-                        name: "FK_JobOpening_Employer_EmployerId",
-                        column: x => x.EmployerId,
-                        principalTable: "Employer",
-                        principalColumn: "EmployerId");
-                    table.ForeignKey(
-                        name: "FK_JobOpening_JobType_JobTypeId",
-                        column: x => x.JobTypeId,
-                        principalTable: "JobType",
-                        principalColumn: "JobTypeId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "JobApplication",
-                columns: table => new
-                {
-                    ApplicationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CoverLetter = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    JobSeekerId = table.Column<int>(type: "int", nullable: false),
-                    JobOpeningId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JobApplication", x => x.ApplicationId);
-                    table.ForeignKey(
-                        name: "FK_JobApplication_JobOpening_JobOpeningId",
-                        column: x => x.JobOpeningId,
-                        principalTable: "JobOpening",
-                        principalColumn: "JobOpeningId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_JobApplication_JobSeeker_JobSeekerId",
+                        name: "FK_JobSeeker_AspNetUsers_JobSeekerId",
                         column: x => x.JobSeekerId,
-                        principalTable: "JobSeeker",
-                        principalColumn: "JobSeekerId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -374,6 +319,34 @@ namespace WorkWave.Migrations
                         principalColumn: "JobOpeningId");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "JobApplication",
+                columns: table => new
+                {
+                    ApplicationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CoverLetter = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    JobSeekerId = table.Column<int>(type: "int", nullable: false),
+                    JobOpeningId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobApplication", x => x.ApplicationId);
+                    table.ForeignKey(
+                        name: "FK_JobApplication_JobOpening_JobOpeningId",
+                        column: x => x.JobOpeningId,
+                        principalTable: "JobOpening",
+                        principalColumn: "JobOpeningId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JobApplication_JobSeeker_JobSeekerId",
+                        column: x => x.JobSeekerId,
+                        principalTable: "JobSeeker",
+                        principalColumn: "JobSeekerId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -414,12 +387,6 @@ namespace WorkWave.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employer_UserId",
-                table: "Employer",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_JobApplication_JobOpeningId",
                 table: "JobApplication",
                 column: "JobOpeningId");
@@ -446,20 +413,9 @@ namespace WorkWave.Migrations
                 column: "JobTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSeeker_UserId",
-                table: "JobSeeker",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OpeningCategory_JobCategoryId",
                 table: "OpeningCategory",
                 column: "JobCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_RoleId",
-                table: "UserRoles",
-                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -490,7 +446,7 @@ namespace WorkWave.Migrations
                 name: "OpeningCategory");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "JobSeeker");
@@ -502,16 +458,13 @@ namespace WorkWave.Migrations
                 name: "JobOpening");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "Employer");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "JobType");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Employer");
         }
     }
 }

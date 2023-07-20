@@ -43,7 +43,6 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<JobSeeker>(ConfigureJobSeeker);
         modelBuilder.Entity<Employer>(ConfigureEmployer);
         modelBuilder.Entity<User>(ConfigureUser);
-        modelBuilder.Entity<Role>(ConfigureRole);
     }
 
     private void ConfigureJobOpening(EntityTypeBuilder<JobOpening> builder)
@@ -166,6 +165,12 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         builder.Property(js => js.Education)
             .HasMaxLength(300);
 
+        builder.Property(u => u.FirstName)
+            .HasMaxLength(50);
+
+        builder.Property(u => u.LastName)
+            .HasMaxLength(50);
+
         builder.HasOne(js => js.User)
             .WithOne(u => u.JobSeekerProfile)
             .HasForeignKey<JobSeeker>(js => js.JobSeekerId);
@@ -218,24 +223,15 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(u => u.FirstName)
-            .HasMaxLength(50);
-
-        builder.Property(u => u.LastName)
-            .HasMaxLength(50);
-
         builder.HasOne(u => u.EmployerProfile)
             .WithOne(e => e.User)
-            .HasForeignKey<Employer>(e => e.UserId);
+            .HasForeignKey<User>(e => e.Id);
 
         builder.HasOne(u => u.JobSeekerProfile)
             .WithOne(js => js.User)
-            .HasForeignKey<JobSeeker>(js => js.UserId);
+            .HasForeignKey<JobSeeker>(js => js.JobSeekerId);
     }
 
-    private void ConfigureRole(EntityTypeBuilder<Role> builder)
-    {
-        builder.HasKey(r => r.RoleId);
-    }
+    
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

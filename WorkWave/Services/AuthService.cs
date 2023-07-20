@@ -17,31 +17,26 @@ namespace WorkWave.Services
             
         }
 
-
-
-        public Task<bool> AddRole(User user, string roleName)
+        public async Task<IdentityResult> ChangePassword(string userName, string OldPassword, string NewPassword)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, OldPassword, NewPassword);
+            return result;
         }
 
-        public Task<string> ChangePassword(string userName, string OldPassword, string NewPassword)
+        public async Task<User> GetCurrentUser(ClaimsPrincipal claimsUser)
         {
-            throw new NotImplementedException();
-        }
+            if (claimsUser == null)
+            {
+                return null;
+            }
 
-        public Task<User> GetCurrentUser(ClaimsPrincipal claimsUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<string>> GetRoles(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> HasRole(User user, string roleName)
-        {
-            throw new NotImplementedException();
+            return await _userManager.GetUserAsync(claimsUser);
         }
 
         public async Task<User> Login(string userName, string password, bool rememberMe)
@@ -57,15 +52,9 @@ namespace WorkWave.Services
             return true;
         }
 
-        public async Task<IdentityResult> Register(User user, string password, bool signIn = true)
+        public async Task<IdentityResult> CreateUser(User user, string password)
         {
             return await _userManager.CreateAsync(user, password);
         }
-
-        public Task<bool> RemoveRoles(User user, List<string> roleNames)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

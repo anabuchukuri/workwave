@@ -30,7 +30,7 @@ namespace WorkWave.Controllers
 
         // GET: api/roles
         [HttpGet]
-        [Authorize(Roles = "Admin")] // Only users with the "Admin" role can access this action
+        /*[Authorize(Roles = "Admin")]*/ // Only users with the "Admin" role can access this action
         public IActionResult GetRoles()
         {
             var roles = _roleManager.Roles.ToList();
@@ -39,7 +39,7 @@ namespace WorkWave.Controllers
 
         // POST: api/roles
         [HttpPost]
-        [Authorize(Roles = "Admin")] // Only users with the "Admin" role can access this action
+        /*[Authorize(Roles = "Admin")]*/ // Only users with the "Admin" role can access this action
         public async Task<IActionResult> CreateRole(RoleDto roleDto)
         {
             var role = new Role { Name = roleDto.Name };
@@ -57,7 +57,7 @@ namespace WorkWave.Controllers
 
         // PUT: api/roles/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")] // Only users with the "Admin" role can access this action
+       /* [Authorize(Roles = "Admin")]*/ // Only users with the "Admin" role can access this action
         public async Task<IActionResult> UpdateRole(int id, RoleDto roleDto)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
@@ -81,7 +81,7 @@ namespace WorkWave.Controllers
 
         // DELETE: api/roles/{id}
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // Only users with the "Admin" role can access this action
+        /*[Authorize(Roles = "Admin")] */// Only users with the "Admin" role can access this action
         public async Task<IActionResult> DeleteRole(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());

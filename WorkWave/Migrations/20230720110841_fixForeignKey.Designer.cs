@@ -12,8 +12,8 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    [Migration("20230719180907_removeuserrole")]
-    partial class removeuserrole
+    [Migration("20230720110841_fixForeignKey")]
+    partial class fixForeignKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,7 +137,6 @@ namespace WorkWave.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployerId"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -155,14 +154,10 @@ namespace WorkWave.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Website")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("EmployerId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Employer");
                 });
@@ -319,38 +314,39 @@ namespace WorkWave.Migrations
             modelBuilder.Entity("WorkWave.DBModels.JobSeeker", b =>
                 {
                     b.Property<int>("JobSeekerId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobSeekerId"));
-
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Education")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Experience")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("GithubProfile")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LinkedInProfile")
+                    b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LinkedInProfile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResumeUrl")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Skills")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -358,9 +354,6 @@ namespace WorkWave.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("JobSeekerId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("JobSeeker");
                 });
@@ -399,18 +392,15 @@ namespace WorkWave.Migrations
 
             modelBuilder.Entity("WorkWave.DBModels.Role", b =>
                 {
-                    b.Property<int>("RoleId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -420,7 +410,7 @@ namespace WorkWave.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("RoleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -433,10 +423,7 @@ namespace WorkWave.Migrations
             modelBuilder.Entity("WorkWave.DBModels.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -456,18 +443,8 @@ namespace WorkWave.Migrations
                     b.Property<int?>("EmployerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<int?>("JobSeekerId")
                         .HasColumnType("int");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -570,17 +547,6 @@ namespace WorkWave.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WorkWave.DBModels.Employer", b =>
-                {
-                    b.HasOne("WorkWave.DBModels.User", "User")
-                        .WithOne("EmployerProfile")
-                        .HasForeignKey("WorkWave.DBModels.Employer", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WorkWave.DBModels.JobApplication", b =>
                 {
                     b.HasOne("WorkWave.DBModels.JobOpening", "JobOpening")
@@ -628,7 +594,7 @@ namespace WorkWave.Migrations
                 {
                     b.HasOne("WorkWave.DBModels.User", "User")
                         .WithOne("JobSeekerProfile")
-                        .HasForeignKey("WorkWave.DBModels.JobSeeker", "UserId")
+                        .HasForeignKey("WorkWave.DBModels.JobSeeker", "JobSeekerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -652,9 +618,23 @@ namespace WorkWave.Migrations
                     b.Navigation("JobOpening");
                 });
 
+            modelBuilder.Entity("WorkWave.DBModels.User", b =>
+                {
+                    b.HasOne("WorkWave.DBModels.Employer", "EmployerProfile")
+                        .WithOne("User")
+                        .HasForeignKey("WorkWave.DBModels.User", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmployerProfile");
+                });
+
             modelBuilder.Entity("WorkWave.DBModels.Employer", b =>
                 {
                     b.Navigation("JobOpenings");
+
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobCategory", b =>
@@ -683,8 +663,6 @@ namespace WorkWave.Migrations
 
             modelBuilder.Entity("WorkWave.DBModels.User", b =>
                 {
-                    b.Navigation("EmployerProfile");
-
                     b.Navigation("JobSeekerProfile");
                 });
 #pragma warning restore 612, 618
