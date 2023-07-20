@@ -311,7 +311,10 @@ namespace WorkWave.Migrations
             modelBuilder.Entity("WorkWave.DBModels.JobSeeker", b =>
                 {
                     b.Property<int>("JobSeekerId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobSeekerId"));
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -420,7 +423,10 @@ namespace WorkWave.Migrations
             modelBuilder.Entity("WorkWave.DBModels.User", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -481,6 +487,14 @@ namespace WorkWave.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployerId")
+                        .IsUnique()
+                        .HasFilter("[EmployerId] IS NOT NULL");
+
+                    b.HasIndex("JobSeekerId")
+                        .IsUnique()
+                        .HasFilter("[JobSeekerId] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -587,17 +601,6 @@ namespace WorkWave.Migrations
                     b.Navigation("JobType");
                 });
 
-            modelBuilder.Entity("WorkWave.DBModels.JobSeeker", b =>
-                {
-                    b.HasOne("WorkWave.DBModels.User", "User")
-                        .WithOne("JobSeekerProfile")
-                        .HasForeignKey("WorkWave.DBModels.JobSeeker", "JobSeekerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WorkWave.DBModels.OpeningCategory", b =>
                 {
                     b.HasOne("WorkWave.DBModels.JobCategory", "JobCategory")
@@ -619,11 +622,15 @@ namespace WorkWave.Migrations
                 {
                     b.HasOne("WorkWave.DBModels.Employer", "EmployerProfile")
                         .WithOne("User")
-                        .HasForeignKey("WorkWave.DBModels.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WorkWave.DBModels.User", "EmployerId");
+
+                    b.HasOne("WorkWave.DBModels.JobSeeker", "JobSeekerProfile")
+                        .WithOne("User")
+                        .HasForeignKey("WorkWave.DBModels.User", "JobSeekerId");
 
                     b.Navigation("EmployerProfile");
+
+                    b.Navigation("JobSeekerProfile");
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.Employer", b =>
@@ -651,16 +658,14 @@ namespace WorkWave.Migrations
             modelBuilder.Entity("WorkWave.DBModels.JobSeeker", b =>
                 {
                     b.Navigation("JobApplications");
+
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobType", b =>
                 {
                     b.Navigation("JobOpenings");
-                });
-
-            modelBuilder.Entity("WorkWave.DBModels.User", b =>
-                {
-                    b.Navigation("JobSeekerProfile");
                 });
 #pragma warning restore 612, 618
         }

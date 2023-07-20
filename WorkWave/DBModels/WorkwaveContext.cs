@@ -225,11 +225,11 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.HasOne(u => u.EmployerProfile)
             .WithOne(e => e.User)
-            .HasForeignKey<User>(e => e.Id);
+            .HasForeignKey<User>(e => e.EmployerId);
 
         builder.HasOne(u => u.JobSeekerProfile)
             .WithOne(js => js.User)
-            .HasForeignKey<JobSeeker>(js => js.JobSeekerId);
+            .HasForeignKey<User>(js => js.JobSeekerId);
     }
 
     

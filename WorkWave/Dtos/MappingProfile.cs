@@ -50,8 +50,8 @@ namespace WorkWave.Dtos
             CreateMap<EmployerRegistrationDto, Employer>();
 
             /*JobSeeker*/
-            CreateMap<Employer, JobSeekerRegistrationDto>();
-            CreateMap<JobSeekerRegistrationDto, Employer>();
+            CreateMap<JobSeeker, JobSeekerRegistrationDto>();
+            CreateMap<JobSeekerRegistrationDto, JobSeeker>();
         }
     }
 }
