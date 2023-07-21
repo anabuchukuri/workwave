@@ -15,9 +15,10 @@ namespace WorkWave.Services
         }
         public async Task<User> GetSeekerByUserId(int userId)
         {
-            return await _context.User.Where(e=>e.Id==userId)
+             var i=await _context.User.Where(e=>e.Id==userId)
                 .Include(u => u.JobSeekerProfile) 
                 .FirstOrDefaultAsync();
+            return i;
         }
     }
 }

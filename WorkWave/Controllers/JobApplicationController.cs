@@ -60,20 +60,20 @@ namespace WorkWave.Controllers
 
         // POST api/<JobOpeningController>
         [HttpPost]
-        [RoleFilter("Jobseeker")]
-        public async Task<ActionResult<JobOpeningDto>> Post(JobApplicationAddDto jobApplicationAddDto)
+        [RoleFilter("jobseeker")]
+        public async Task<ActionResult<JobApplication>> Post(JobApplicationAddDto jobApplicationAddDto)
         {
-            string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _seekerService.GetSeekerByUserId(int.Parse(userId));
-            // Map the DTO to the entity model
-            var jobApplication = _mapper.Map<JobApplication>(jobApplicationAddDto);
-            jobApplication.JobSeeker = user.JobSeekerProfile;
-            jobApplication.ApplicationDate = DateTime.Now;
             try
             {
+                string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _seekerService.GetSeekerByUserId(int.Parse(userId));
+                // Map the DTO to the entity model
+                var jobApplication = _mapper.Map<JobApplication>(jobApplicationAddDto);
+                jobApplication.JobSeeker = user.JobSeekerProfile;
+                jobApplication.ApplicationDate = DateTime.Now;
+            
                 var createdJobApplication = await _service.Add(jobApplication);
-                var createdjobApplicationDto = _mapper.Map<JobApplicationAddDto>(createdJobApplication);
-                return Ok(createdjobApplicationDto);
+                return Ok(createdJobApplication);
             }
             catch (ApplicationException ex)
             {

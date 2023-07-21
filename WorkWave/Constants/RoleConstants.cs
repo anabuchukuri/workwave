@@ -2,8 +2,8 @@
 {
     public class RoleName
     {
-            public const string Admin = "Admin";
-            public const string JobSeeker = "JobSeeker";
-            public const string Employer = "Employer";
+            public const string Admin = "admin";
+            public const string JobSeeker = "jobseeker";
+            public const string Employer = "employer";
     }
 }

@@ -47,7 +47,7 @@ namespace WorkWave.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRole(RoleDto roleDto)
         {
-            var role = new Role { Name = roleDto.Name };
+            var role = new Role { Name = roleDto.Name.ToLower() };
             var result = await _roleManager.CreateAsync(role);
 
             if (result.Succeeded)

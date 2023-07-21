@@ -75,7 +75,7 @@ namespace WorkWave.Filters
                 context.Result = new UnauthorizedResult();
                 return;
             }
-            next();
+            await next();
         }
     }
 }

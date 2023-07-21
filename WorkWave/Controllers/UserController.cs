@@ -93,10 +93,16 @@ namespace WorkWave.Controllers
         }
 
         [HttpPost("changePassword")]
-        public async Task<IdentityResult> ChangePassword(UserChangePasswordDto model)
+        public async Task<ActionResult> ChangePassword(UserChangePasswordDto model)
         {
-           
-            return await _service.ChangePassword( model.Username, model.OldPassword, model.NewPassword);
+            string userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            if (userName==model.Username)
+            {
+                var i=await _service.ChangePassword(model.Username, model.OldPassword, model.NewPassword);
+                if(i.Succeeded) return Ok("password changed sucessfully");
+                return BadRequest(i.Errors);
+            }
+            else return Unauthorized();
         }
 
         [HttpPost("login")]
