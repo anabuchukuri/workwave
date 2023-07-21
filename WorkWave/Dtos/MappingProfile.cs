@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WorkWave.DBModels;
+using WorkWave.Dtos.JobApplicationDtos;
 using WorkWave.Dtos.JobCategoryDtos;
 using WorkWave.Dtos.JobOpeningDtos;
 using WorkWave.Dtos.JobTypeDtos;
@@ -52,6 +53,13 @@ namespace WorkWave.Dtos
             /*JobSeeker*/
             CreateMap<JobSeeker, JobSeekerRegistrationDto>();
             CreateMap<JobSeekerRegistrationDto, JobSeeker>();
+
+            /*JobApplication*/
+            CreateMap<JobApplication, JobApplicationAddDto>();
+            CreateMap<JobApplicationAddDto, JobApplication>();
+
+            CreateMap<JobApplication, JobApplicationDto>();
+            CreateMap<JobApplicationDto, JobApplication>();
         }
     }
 }

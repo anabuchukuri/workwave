@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobOpeningDtos;
+using WorkWave.Filters;
 using WorkWave.Services;
 using WorkWave.Services.Abstracts;
 
@@ -28,7 +29,7 @@ namespace WorkWave.Controllers
         }
 
         // GET: api/<JobOpeningController>
-        [Authorize]
+       
         [HttpGet]
         public async Task<ActionResult<List<JobOpeningDto>>> GetAll()
         {
@@ -43,6 +44,7 @@ namespace WorkWave.Controllers
 
         // GET api/<JobOpeningController>/5
         [HttpGet("{id}")]
+
         public async Task<ActionResult<JobOpeningDto>> Get(int id)
         {
             var jobOpening = await _service.GetById(id);
@@ -56,6 +58,7 @@ namespace WorkWave.Controllers
 
         // POST api/<JobOpeningController>
         [HttpPost]
+        [RoleFilter("Employer")]
         public async Task<ActionResult<JobOpeningDto>> Post(JobOpeningAddDto jobOpeningAddDto)
         {
             // Map the DTO to the entity model

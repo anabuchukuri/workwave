@@ -17,9 +17,9 @@ namespace WorkWave.Services
             
         }
 
-        public async Task<IdentityResult> ChangePassword(ClaimsPrincipal userPrincipal, string userName, string OldPassword, string NewPassword)
+        public async Task<IdentityResult> ChangePassword( string userName, string OldPassword, string NewPassword)
         {
-            userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {

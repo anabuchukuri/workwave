@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkWave.DbModels;
 
@@ -11,9 +12,11 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    partial class WorkwaveContextModelSnapshot : ModelSnapshot
+    [Migration("20230720234819_addseeker")]
+    partial class addseeker
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

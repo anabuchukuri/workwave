@@ -14,6 +14,9 @@ using WorkWave.DBModels;
 using WorkWave.Dtos.RoleDto;
 using WorkWave.Constants;
 using WorkWave.Filters;
+using System.Xml.Linq;
+using WorkWave.Services;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,13 +38,13 @@ namespace WorkWave.Controllers
         [RoleFilter("admin")]
         public IActionResult GetRoles()
         {
+           
             var roles = _roleManager.Roles.ToList();
             return Ok(roles);
         }
 
         // POST: api/roles
         [HttpPost]
-        [Authorize(Roles = RoleName.Admin)] // Only users with the "Admin" role can access this action
         public async Task<IActionResult> CreateRole(RoleDto roleDto)
         {
             var role = new Role { Name = roleDto.Name };

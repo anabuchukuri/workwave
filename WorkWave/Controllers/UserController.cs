@@ -28,11 +28,8 @@ namespace WorkWave.Controllers
         private readonly IMapper _mapper; 
         private readonly IConfiguration _configuration;
 
-        private readonly WorkwaveContext _context;
-
-        public UserController(WorkwaveContext context, AuthService authService, RoleService roleService, IMapper mapper, IConfiguration configuration)
+        public UserController( AuthService authService, RoleService roleService, IMapper mapper, IConfiguration configuration)
         {
-            _context = context;
             _service = authService;
             _roleService = roleService;
             _mapper = mapper;
@@ -66,7 +63,7 @@ namespace WorkWave.Controllers
         {
             User newUser = _mapper.Map<User>(model);
             JobSeeker jobSeeker = _mapper.Map<JobSeeker>(model);
-            newUser.Role = RoleName.Employer;
+            newUser.Role = RoleName.JobSeeker;
             newUser.JobSeekerProfile = jobSeeker;
             var user = await _service.CreateUser(newUser, model.Password);
             await _roleService.AddRoleToUser(newUser, newUser.Role);
@@ -96,9 +93,10 @@ namespace WorkWave.Controllers
         }
 
         [HttpPost("changePassword")]
-        public async Task<IdentityResult> ChangePassword(ClaimsPrincipal userPrincipal,UserChangePasswordDto model)
+        public async Task<IdentityResult> ChangePassword(UserChangePasswordDto model)
         {
-           return await _service.ChangePassword(userPrincipal, model.Username, model.OldPassword, model.NewPassword);
+           
+            return await _service.ChangePassword( model.Username, model.OldPassword, model.NewPassword);
         }
 
         [HttpPost("login")]

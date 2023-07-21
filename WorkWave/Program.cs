@@ -9,6 +9,7 @@ using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos;
 using WorkWave.Services;
+using WorkWave.Services.Abstracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.AddScoped<JobTypeService>();
 builder.Services.AddScoped<JobCategoryService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<JobSeekerService>();
+builder.Services.AddScoped<JobApplicationService>();
+builder.Services.AddTransient<EmailService>();
 
 builder.Services.AddDbContext<WorkwaveContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

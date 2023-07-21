@@ -10,7 +10,7 @@ namespace WorkWave.Services.Abstracts
             Task<bool> Logout();
             Task<User> Login(string userName, string password);
             Task<User> GetCurrentUser(ClaimsPrincipal claimsUser);
-            Task<IdentityResult> ChangePassword(ClaimsPrincipal userPrincipal, string userName, string OldPassword, string NewPassword);
+            Task<IdentityResult> ChangePassword(string userName, string OldPassword, string NewPassword);
 
     }
 }
