@@ -83,9 +83,9 @@ namespace WorkWave.Controllers
             if(!roleExist) { return BadRequest("Role doesn't exist"); }
             newUser.Role = Role;
             var user = await _service.CreateUser(newUser, model.Password);
-            await _roleService.AddRoleToUser(newUser, Role);
             if (user.Succeeded)
             {
+                await _roleService.AddRoleToUser(newUser, Role);
                 return Ok("user added");
             }
             else return BadRequest(user.Errors);

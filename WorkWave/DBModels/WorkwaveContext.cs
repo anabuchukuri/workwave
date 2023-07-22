@@ -68,7 +68,7 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.HasOne(jo => jo.JobDetails)
             .WithOne(jd => jd.JobOpening)
-            .HasForeignKey<JobDetails>(jd => jd.JobDetailsId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey<JobOpening>(jd => jd.JobDetailsId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(jo => jo.OpeningCategories)
             .WithOne(oc => oc.JobOpening)
@@ -94,7 +94,9 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         builder.Property(jd => jd.NumberOfOpenings).IsRequired();
         builder.Property(jd => jd.IsFullTime).IsRequired();
         builder.Property(jd => jd.IsRemote).IsRequired();*/
+        
 
+        
         builder.HasOne(jd => jd.JobOpening)
             .WithOne(jo => jo.JobDetails)
             .HasForeignKey<JobDetails>(jd => jd.JobOpeningId).OnDelete(DeleteBehavior.Restrict);

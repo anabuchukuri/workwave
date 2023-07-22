@@ -2,6 +2,7 @@
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobApplicationDtos;
 using WorkWave.Dtos.JobCategoryDtos;
+using WorkWave.Dtos.JobDetailDtos;
 using WorkWave.Dtos.JobOpeningDtos;
 using WorkWave.Dtos.JobTypeDtos;
 using WorkWave.Dtos.UserDtos;
@@ -18,6 +19,16 @@ namespace WorkWave.Dtos
 
             CreateMap<JobOpening, JobOpeningAddDto>();
             CreateMap<JobOpeningAddDto, JobOpening>();
+
+            CreateMap<JobOpening, JobOpeningUpdateDto>();
+            CreateMap<JobOpeningUpdateDto, JobOpening>();
+
+            /*JobDetails*/
+            CreateMap<JobDetailAddDto, JobOpeningAddDto>();
+            CreateMap<JobOpeningAddDto, JobDetailAddDto>();
+
+            CreateMap<JobDetailAddDto, JobDetails>();
+            CreateMap<JobDetails, JobDetailAddDto>();
 
             /*JobType*/
             CreateMap<JobType, JobTypeDto>();

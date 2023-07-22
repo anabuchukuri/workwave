@@ -31,6 +31,7 @@ namespace WorkWave.Services
 
         public async Task Delete(int id)
         {
+            
             var jobType = await _context.JobType.FindAsync(id);
             if (jobType == null)
             {

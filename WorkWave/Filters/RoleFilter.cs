@@ -54,6 +54,7 @@ namespace WorkWave.Filters
                         if (count == 0)
                         {
                             context.Result = new UnauthorizedResult();
+                            return;
                         }
 
                     }

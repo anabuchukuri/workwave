@@ -1,16 +1,29 @@
-﻿using WorkWave.DBModels;
-
-namespace WorkWave.Dtos.JobOpeningDtos
+﻿namespace WorkWave.Dtos.JobOpeningDtos
 {
-    public class JobOpeningAddDto
+    public class JobOpeningResponseDto
     {
+        public int JobOpeningId { get; set; }
+
         public string Title { get; set; }
+
         public string Description { get; set; }
+
         public string Location { get; set; }
+
         public decimal Salary { get; set; }
+
         public bool IsActive { get; set; }
-        public int? JobTypeId { get; set; }
-        public List<int>? JobCategoryList { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public int? EmployerId { get; set; }
+
+        public string? EmployerCompanyName { get; set; }
+        public string? EmployercontactNumber { get; set; }
+
+        public int? AuthorUserId { get; set; }
+
+        public int JobDetailsId { get; set; }
 
         public string? EmploymentType { get; set; }
 

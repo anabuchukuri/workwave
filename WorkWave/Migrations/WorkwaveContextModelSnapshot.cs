@@ -220,42 +220,37 @@ namespace WorkWave.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobDetailsId"));
 
-                    b.Property<DateTime>("ApplicationDeadline")
+                    b.Property<DateTime?>("ApplicationDeadline")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ApplicationInstructions")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyCulture")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmploymentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsFullTime")
+                    b.Property<bool?>("IsFullTime")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsRemote")
+                    b.Property<bool?>("IsRemote")
                         .HasColumnType("bit");
 
                     b.Property<int>("JobOpeningId")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberOfOpenings")
+                    b.Property<int?>("NumberOfOpenings")
                         .HasColumnType("int");
 
                     b.Property<string>("Qualifications")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RequiredExperience")
+                    b.Property<int?>("RequiredExperience")
                         .HasColumnType("int");
 
                     b.Property<string>("Responsibilities")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("JobDetailsId");
@@ -586,7 +581,8 @@ namespace WorkWave.Migrations
                     b.HasOne("WorkWave.DBModels.JobOpening", "JobOpening")
                         .WithOne("JobDetails")
                         .HasForeignKey("WorkWave.DBModels.JobDetails", "JobOpeningId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("JobOpening");
                 });

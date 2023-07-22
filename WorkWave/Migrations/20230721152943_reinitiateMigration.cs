@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WorkWave.Migrations
 {
     /// <inheritdoc />
-    public partial class fixForeignKey : Migration
+    public partial class reinitiateMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -274,7 +274,9 @@ namespace WorkWave.Migrations
                     ApplicationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CoverLetter = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CoverLetter = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    References = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JobSpecificCV = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobSeekerId = table.Column<int>(type: "int", nullable: false),
                     JobOpeningId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -301,16 +303,16 @@ namespace WorkWave.Migrations
                 {
                     JobDetailsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmploymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationDeadline = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RequiredExperience = table.Column<int>(type: "int", nullable: false),
-                    Qualifications = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Responsibilities = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyCulture = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationInstructions = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NumberOfOpenings = table.Column<int>(type: "int", nullable: false),
-                    IsFullTime = table.Column<bool>(type: "bit", nullable: false),
-                    IsRemote = table.Column<bool>(type: "bit", nullable: false),
+                    EmploymentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApplicationDeadline = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RequiredExperience = table.Column<int>(type: "int", nullable: true),
+                    Qualifications = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Responsibilities = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyCulture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApplicationInstructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumberOfOpenings = table.Column<int>(type: "int", nullable: true),
+                    IsFullTime = table.Column<bool>(type: "bit", nullable: true),
+                    IsRemote = table.Column<bool>(type: "bit", nullable: true),
                     JobOpeningId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

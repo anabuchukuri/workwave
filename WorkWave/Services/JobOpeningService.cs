@@ -68,7 +68,7 @@ namespace WorkWave.Services
 
         public async Task<JobOpening> GetById(int id)
         { 
-            return await _context.JobOpening.FirstOrDefaultAsync(jo => jo.JobOpeningId == id); ;
+            return await _context.JobOpening.Include(e => e.JobDetails).Include(e=>e.Employer).ThenInclude(e=>e.User).FirstOrDefaultAsync(jo => jo.JobOpeningId == id); ;
         }
     }
 }
