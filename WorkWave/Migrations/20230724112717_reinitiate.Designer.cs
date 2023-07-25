@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkWave.DbModels;
 
@@ -11,9 +12,11 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    partial class WorkwaveContextModelSnapshot : ModelSnapshot
+    [Migration("20230724112717_reinitiate")]
+    partial class reinitiate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,9 +196,6 @@ namespace WorkWave.Migrations
                     b.Property<string>("References")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.HasKey("ApplicationId");
 
                     b.HasIndex("JobOpeningId");
@@ -220,13 +220,6 @@ namespace WorkWave.Migrations
                     b.HasKey("JobCategoryId");
 
                     b.ToTable("JobCategory");
-
-                    b.HasData(
-                        new
-                        {
-                            JobCategoryId = 1,
-                            Name = "Sales"
-                        });
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobDetails", b =>
@@ -390,13 +383,6 @@ namespace WorkWave.Migrations
                     b.HasKey("JobTypeId");
 
                     b.ToTable("JobType");
-
-                    b.HasData(
-                        new
-                        {
-                            JobTypeId = 1,
-                            Name = "Full-Time"
-                        });
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.OpeningCategory", b =>
@@ -447,7 +433,7 @@ namespace WorkWave.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "0cbcd0ec-7875-40f5-84ff-83cdeaa95c39",
+                            ConcurrencyStamp = "7749dcea-cf8a-4359-94d8-ddb99521f55c",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -544,15 +530,14 @@ namespace WorkWave.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7b8178d5-5d75-4fe4-b757-197e8cc6dfdb",
+                            ConcurrencyStamp = "7f04a0d9-aa17-40f1-8d96-fc98a6000ed1",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEEebugqWkTtPm+4mM3IIe/veRwOli3XWoooxnBTuu8TLDHJK0PwXMHDGk73r8+bLMw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEODHtoeO3U1m2MzUfxajIATUjc591MZluQbohO4nVFzmjOmISp9R9e1EzYgnRvaxUg==",
                             PhoneNumberConfirmed = false,
                             Role = "admin",
-                            SecurityStamp = "028457b3-f755-45fe-b85e-070c8141e9a0",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

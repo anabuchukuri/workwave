@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkWave.Constants;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobApplicationDtos;
@@ -90,6 +91,39 @@ namespace WorkWave.Services
         public async Task<JobApplication> GetById(int id)
         {
             return await _context.JobApplication.FirstOrDefaultAsync(jo => jo.ApplicationId == id); ;
+        }
+
+        public async Task<List<JobApplication>> GetApplicationsForEmployer(int id, Status status)
+        {
+            var employer = await _context.Employer
+           .Include(e => e.JobOpenings)
+           .ThenInclude(jo => jo.JobApplications)
+           .FirstOrDefaultAsync(e => e.EmployerId == id);
+            return employer.JobOpenings
+                .SelectMany(jo => jo.JobApplications)
+                .Where(app => status!=null? app.Status == status:true)
+                .ToList(); 
+        }
+
+        public async Task<JobApplication> ChangeApplicationStatus(int id, Status status)
+        {
+
+            var jobApplication = await _context.JobApplication
+         .FirstOrDefaultAsync(app => app.ApplicationId == id);
+
+            if (jobApplication == null)
+            {
+                // Return null or handle the case when the job application is not found.
+                return null;
+            }
+
+            // Update the status of the job application
+            jobApplication.Status = status;
+
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
+
+            return jobApplication;
         }
     }
 }

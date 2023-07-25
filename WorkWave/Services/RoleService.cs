@@ -31,7 +31,7 @@ namespace WorkWave.Services
 
         public async Task<bool> RoleExistsAsync(string roleName)
         {
-            return await _roleManager.RoleExistsAsync(roleName);
+            return await _roleManager.RoleExistsAsync(roleName.ToLower());
         }
 
         public async Task<List<string>> GetAllRolesAsync()

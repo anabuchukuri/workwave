@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobOpeningDtos;
 using WorkWave.Dtos.JobTypeDtos;
+using WorkWave.Filters;
 using WorkWave.Services;
 using WorkWave.Services.Abstracts;
 
@@ -28,6 +30,7 @@ namespace WorkWave.Controllers
         }
 
         // GET: api/<JobTypeController>
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<JobTypeDto>>> GetAll()
         {
@@ -41,6 +44,7 @@ namespace WorkWave.Controllers
         }
 
         // GET api/<JobTypeController>/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<JobTypeDto>> Get(int id)
         {
@@ -54,6 +58,8 @@ namespace WorkWave.Controllers
         }
 
         // POST api/<JobTypeController>
+        [Authorize]
+        [RoleFilter("admin")]
         [HttpPost]
         public async Task<ActionResult<JobTypeDto>> Post(JobTypeAddDto jobTypeAddDto)
         {
@@ -71,8 +77,10 @@ namespace WorkWave.Controllers
             }
         }
 
-            // PUT api/<JobTypeController>/5
-            [HttpPut("{id}")]
+        // PUT api/<JobTypeController>/5
+        [Authorize]
+        [RoleFilter("admin")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<JobTypeDto>> Put(int id, [FromBody] JobTypeAddDto JobTypeDto)
         {
             var existingJobType = await _service.GetById(id);
@@ -94,6 +102,8 @@ namespace WorkWave.Controllers
         }
 
         // DELETE api/<JobTypeController>/5
+        [Authorize]
+        [RoleFilter("admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

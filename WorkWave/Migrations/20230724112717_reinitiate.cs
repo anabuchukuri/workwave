@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WorkWave.Migrations
 {
     /// <inheritdoc />
-    public partial class reinitiateMigration : Migration
+    public partial class reinitiate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -287,14 +287,13 @@ namespace WorkWave.Migrations
                         name: "FK_JobApplication_JobOpening_JobOpeningId",
                         column: x => x.JobOpeningId,
                         principalTable: "JobOpening",
-                        principalColumn: "JobOpeningId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "JobOpeningId");
                     table.ForeignKey(
                         name: "FK_JobApplication_JobSeeker_JobSeekerId",
                         column: x => x.JobSeekerId,
                         principalTable: "JobSeeker",
                         principalColumn: "JobSeekerId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -323,7 +322,7 @@ namespace WorkWave.Migrations
                         column: x => x.JobOpeningId,
                         principalTable: "JobOpening",
                         principalColumn: "JobOpeningId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -348,6 +347,21 @@ namespace WorkWave.Migrations
                         principalTable: "JobOpening",
                         principalColumn: "JobOpeningId");
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { 1, "7749dcea-cf8a-4359-94d8-ddb99521f55c", "admin", "ADMIN" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "EmployerId", "JobSeekerId", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 1, 0, "7f04a0d9-aa17-40f1-8d96-fc98a6000ed1", "admin@gmail.com", true, null, null, false, null, null, "ADMIN", "AQAAAAEAACcQAAAAEODHtoeO3U1m2MzUfxajIATUjc591MZluQbohO4nVFzmjOmISp9R9e1EzYgnRvaxUg==", null, false, "admin", null, false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

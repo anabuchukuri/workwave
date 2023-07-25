@@ -12,8 +12,8 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    [Migration("20230721152943_reinitiateMigration")]
-    partial class reinitiateMigration
+    [Migration("20230724115142_seedcategory")]
+    partial class seedcategory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,13 @@ namespace WorkWave.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -213,6 +220,13 @@ namespace WorkWave.Migrations
                     b.HasKey("JobCategoryId");
 
                     b.ToTable("JobCategory");
+
+                    b.HasData(
+                        new
+                        {
+                            JobCategoryId = 1,
+                            Name = "Sales"
+                        });
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.JobDetails", b =>
@@ -376,6 +390,13 @@ namespace WorkWave.Migrations
                     b.HasKey("JobTypeId");
 
                     b.ToTable("JobType");
+
+                    b.HasData(
+                        new
+                        {
+                            JobTypeId = 1,
+                            Name = "Full-Time"
+                        });
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.OpeningCategory", b =>
@@ -421,6 +442,15 @@ namespace WorkWave.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "722954d9-58d1-4a29-a671-6bea84d2d034",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("WorkWave.DBModels.User", b =>
@@ -508,6 +538,23 @@ namespace WorkWave.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "dfefa1e5-c482-4f35-9fdd-ac90549830df",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMSCmZaQr3eBJED+uZzJmipzKBOlUsdlbPOIJD6koE8wCmwoY5HdyxQ5hC8s+V7eNw==",
+                            PhoneNumberConfirmed = false,
+                            Role = "admin",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -565,13 +612,12 @@ namespace WorkWave.Migrations
                 {
                     b.HasOne("WorkWave.DBModels.JobOpening", "JobOpening")
                         .WithMany("JobApplications")
-                        .HasForeignKey("JobOpeningId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("JobOpeningId");
 
                     b.HasOne("WorkWave.DBModels.JobSeeker", "JobSeeker")
                         .WithMany("JobApplications")
                         .HasForeignKey("JobSeekerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("JobOpening");
@@ -584,7 +630,7 @@ namespace WorkWave.Migrations
                     b.HasOne("WorkWave.DBModels.JobOpening", "JobOpening")
                         .WithOne("JobDetails")
                         .HasForeignKey("WorkWave.DBModels.JobDetails", "JobOpeningId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("JobOpening");

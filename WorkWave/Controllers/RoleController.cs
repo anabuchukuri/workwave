@@ -34,8 +34,10 @@ namespace WorkWave.Controllers
         }
 
         // GET: api/roles
-        [HttpGet]
+       
+        [Authorize]
         [RoleFilter("admin")]
+        [HttpGet]
         public IActionResult GetRoles()
         {
            
@@ -44,6 +46,8 @@ namespace WorkWave.Controllers
         }
 
         // POST: api/roles
+        [Authorize]
+        [RoleFilter("admin")]
         [HttpPost]
         public async Task<IActionResult> CreateRole(RoleDto roleDto)
         {
@@ -61,8 +65,9 @@ namespace WorkWave.Controllers
         }
 
         // PUT: api/roles/{id}
-        [HttpPut("{id}")]
+        [Authorize]
         [RoleFilter("admin")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRole(int id, RoleDto roleDto)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
@@ -85,8 +90,9 @@ namespace WorkWave.Controllers
         }
 
         // DELETE: api/roles/{id}
-        [HttpDelete("{id}")]
+        [Authorize]
         [RoleFilter("admin")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());

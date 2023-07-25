@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Org.BouncyCastle.Crypto.Macs;
 using WorkWave.DBModels;
+using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 
 namespace WorkWave.DbModels;
 
@@ -43,6 +46,14 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<JobSeeker>(ConfigureJobSeeker);
         modelBuilder.Entity<Employer>(ConfigureEmployer);
         modelBuilder.Entity<User>(ConfigureUser);
+        modelBuilder.Entity<Role>(ConfigureRole);
+
+        //set user role to admin
+        modelBuilder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+        {
+            RoleId = 1,
+            UserId = 1
+        });
     }
 
     private void ConfigureJobOpening(EntityTypeBuilder<JobOpening> builder)
@@ -68,7 +79,7 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.HasOne(jo => jo.JobDetails)
             .WithOne(jd => jd.JobOpening)
-            .HasForeignKey<JobOpening>(jd => jd.JobDetailsId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey<JobOpening>(jd => jd.JobDetailsId).IsRequired(false);
 
         builder.HasMany(jo => jo.OpeningCategories)
             .WithOne(oc => oc.JobOpening)
@@ -76,7 +87,7 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.HasMany(jo => jo.JobApplications)
             .WithOne(ja => ja.JobOpening)
-            .HasForeignKey(ja => ja.JobOpeningId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(ja => ja.JobOpeningId).IsRequired(false);
     }
 
 
@@ -94,12 +105,12 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         builder.Property(jd => jd.NumberOfOpenings).IsRequired();
         builder.Property(jd => jd.IsFullTime).IsRequired();
         builder.Property(jd => jd.IsRemote).IsRequired();*/
-        
 
-        
+
+
         builder.HasOne(jd => jd.JobOpening)
             .WithOne(jo => jo.JobDetails)
-            .HasForeignKey<JobDetails>(jd => jd.JobOpeningId).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey<JobDetails>(jd => jd.JobOpeningId);
     }
 
     private void ConfigureJobCategory(EntityTypeBuilder<JobCategory> builder)
@@ -111,6 +122,13 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         builder.HasMany(jc => jc.OpeningCategories)
             .WithOne(oc => oc.JobCategory)
             .HasForeignKey(oc => oc.JobCategoryId);
+
+        
+        builder.HasData(new JobCategory
+        {
+            Name = "Sales",
+            JobCategoryId = 1
+        });
     }
 
     private void ConfigureJobType(EntityTypeBuilder<JobType> builder)
@@ -119,10 +137,15 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.Property(jt => jt.Name).IsRequired();
 
-        //TODO is correct?
         builder.HasMany(jt => jt.JobOpenings)
             .WithOne(jo => jo.JobType)
             .HasForeignKey(jo => jo.JobTypeId);
+
+        builder.HasData(new JobType
+        {
+            Name = "Full-Time",
+            JobTypeId = 1
+        });
     }
 
     private void ConfigureJobApplication(EntityTypeBuilder<JobApplication> builder)
@@ -135,11 +158,11 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.HasOne(ja => ja.JobSeeker)
             .WithMany(js => js.JobApplications)
-            .HasForeignKey(ja => ja.JobSeekerId).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(ja => ja.JobSeekerId);
 
         builder.HasOne(ja => ja.JobOpening)
             .WithMany(jo => jo.JobApplications)
-            .HasForeignKey(ja => ja.JobOpeningId).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(ja => ja.JobOpeningId);
     }
 
     private void ConfigureOpeningCategory(EntityTypeBuilder<OpeningCategory> builder)
@@ -179,7 +202,7 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
 
         builder.HasMany(js => js.JobApplications)
             .WithOne(ja => ja.JobSeeker)
-            .HasForeignKey(ja => ja.JobSeekerId).OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(ja => ja.JobSeekerId);
     }
 
     private void ConfigureEmployer(EntityTypeBuilder<Employer> builder)
@@ -232,8 +255,43 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
         builder.HasOne(u => u.JobSeekerProfile)
             .WithOne(js => js.User)
             .HasForeignKey<User>(js => js.JobSeekerId);
+
+
+        int ADMIN_ID = 1;
+
+        //create user
+        var appUser = new User
+        {
+            Id = ADMIN_ID,
+            Email = "admin@gmail.com",
+            EmailConfirmed = true,
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Role="admin",
+            SecurityStamp = Guid.NewGuid().ToString()
+    };
+
+        //set user password
+        PasswordHasher<User> ph = new PasswordHasher<User>();
+        appUser.PasswordHash = ph.HashPassword(appUser, "adminA1.");
+
+        //seed user
+        builder.HasData(appUser);
+}
+
+    private void ConfigureRole(EntityTypeBuilder<Role> builder)
+    {
+       
+        int ROLE_ID = 1;
+
+        //seed admin role
+        builder.HasData(new Role
+        {
+            Name = "admin",
+            NormalizedName = "ADMIN",
+            Id = ROLE_ID
+        });
     }
 
-    
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

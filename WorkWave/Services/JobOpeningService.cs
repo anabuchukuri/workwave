@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WorkWave.Constants;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos;
@@ -65,6 +66,25 @@ namespace WorkWave.Services
                 return await _context.JobOpening
                     .ToListAsync();
         }
+
+        public async Task<int> checkAvailableOpenings(int jobOpeningId)
+        {
+            var jobApplications = await _context.JobApplication
+        .Where(app => app.JobOpeningId == jobOpeningId && app.Status == Status.Accepted)
+        .ToListAsync();
+
+            var jobOpening = await this.GetById(jobOpeningId);
+
+            var openings = jobOpening.JobDetails.NumberOfOpenings;
+            if (openings!=null)
+            {
+                int openingsCount = (int)openings;
+                int acceptedApplicationsCount = jobApplications.Count();
+                return openingsCount - acceptedApplicationsCount;
+            }
+            return 1;
+        }
+
 
         public async Task<JobOpening> GetById(int id)
         { 

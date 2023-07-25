@@ -15,13 +15,7 @@ namespace WorkWave.Services.Abstracts
 
         Task Delete(int id);
 
-        //TODO
-        /*Task<List<JobOpening>> GetMostPopularOffers();*/
-
+        /*TODO*/
         /*Task<List<JobOpening>> GetOffersContainingPhrase(string phrase);*/
-
-       /* Task<bool> CanUserEditOffer(string userId, string offerId);*/
-
-        /*Task<bool> IncreaseOfferViews(JobOffer offer);*/
     }
 }

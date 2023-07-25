@@ -19,5 +19,12 @@ namespace WorkWave.Services
                .FirstOrDefaultAsync();
             return i;
         }
+
+        public async Task<Employer> GetEmployerById(int id)
+        {
+            var i = await _context.Employer.Where(e => e.EmployerId == id)
+               .FirstOrDefaultAsync();
+            return i;
+        }
     }
 }

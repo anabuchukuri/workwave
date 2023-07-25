@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using WorkWave.Constants;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobApplicationDtos;
 using WorkWave.Dtos.JobOpeningDtos;
@@ -19,20 +22,23 @@ namespace WorkWave.Controllers
 
         private readonly JobApplicationService _service;
         private readonly JobSeekerService _seekerService;
+        private readonly EmployerService _employerService;
+        private readonly JobOpeningService _jobOpeningService;
         private readonly IMapper _mapper;
 
-        /*private readonly WorkwaveContext _context;*/
 
-        public JobApplicationController(JobApplicationService jobApplicationService, JobSeekerService JobSeekerService, IMapper mapper)
+        public JobApplicationController(JobApplicationService jobApplicationService, JobOpeningService jobOpeningService, JobSeekerService JobSeekerService, EmployerService employerService, IMapper mapper)
         {
             _seekerService = JobSeekerService;
             _service = jobApplicationService;
+            _employerService = employerService;
+            _jobOpeningService = jobOpeningService;
             _mapper = mapper;
         }
 
-        // GET: api/<JobOpeningController>
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<JobApplicationAddDto>>> GetAll()
         {
             var jobApplication = await _service.GetAll();
@@ -44,9 +50,8 @@ namespace WorkWave.Controllers
             return Ok(jobApplicationDtos);
         }
 
-        // GET api/<JobOpeningController>/5
         [HttpGet("{id}")]
-
+        [AllowAnonymous]
         public async Task<ActionResult<JobApplicationDto>> Get(int id)
         {
             var jobApplication = await _service.GetByIdWithDetails(id);
@@ -58,8 +63,8 @@ namespace WorkWave.Controllers
             return Ok(jobApplicationDto);
         }
 
-        // POST api/<JobOpeningController>
         [HttpPost]
+        [Authorize]
         [RoleFilter("jobseeker")]
         public async Task<ActionResult<JobApplication>> Post(JobApplicationAddDto jobApplicationAddDto)
         {
@@ -71,7 +76,7 @@ namespace WorkWave.Controllers
                 var jobApplication = _mapper.Map<JobApplication>(jobApplicationAddDto);
                 jobApplication.JobSeeker = user.JobSeekerProfile;
                 jobApplication.ApplicationDate = DateTime.Now;
-            
+
                 var createdJobApplication = await _service.Add(jobApplication);
                 return Ok(createdJobApplication);
             }
@@ -81,8 +86,9 @@ namespace WorkWave.Controllers
             }
         }
 
-        // PUT api/<JobOpeningController>/5
         [HttpPut("{id}")]
+        [Authorize]
+        [RoleFilter("jobseeker")]
         public async Task<ActionResult<JobApplicationDto>> Put(int id, [FromBody] JobApplicationDto JobApplicationDto)
         {
             var existingJobApplication = await _service.GetById(id);
@@ -103,14 +109,66 @@ namespace WorkWave.Controllers
             }
         }
 
-        // DELETE api/<JobOpeningController>/5
         [HttpDelete("{id}")]
+        [Authorize]
+        [RoleFilter("jobseeker")]
+        /*TODO*/
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 await _service.Delete(id);
-                return NoContent();
+                return Ok("job application deleted");
+            }
+            catch (ApplicationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+
+        [HttpGet("getOwnApplications/{EmployerId}")]
+        [Authorize]
+        [RoleFilter("Employer")]
+        public async Task<IActionResult> GetApplicationsForEmployer(int id, Status status)
+        {
+            try
+            {
+                var employer = await _employerService.GetEmployerById(id);
+
+                // Check if the employer exists
+                if (employer == null)
+                {
+                    return NotFound("Employer not found.");
+                }
+
+                // Retrieve job applications for the specific employer and with the given status
+                var jobApplications = await _service.GetApplicationsForEmployer(id, status);
+
+                return Ok(jobApplications);
+            }
+            catch (ApplicationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("ChangeStatus")]
+        [Authorize]
+        [RoleFilter("Employer")]
+        public async Task<IActionResult> ChangeApplicationStatus(int id, Status status)
+        {
+            try
+            {
+                string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var jobApplications = await _service.GetApplicationsForEmployer(int.Parse(userId), status);
+                JobApplication application = jobApplications.Find(job => job.ApplicationId == id);
+                if (application == null) return NotFound("user's application not found");
+                int count = await _jobOpeningService.checkAvailableOpenings(id);
+                if (count == 0) NotFound("maximum number of applicants has been reached");
+                var result = await _service.ChangeApplicationStatus(id, status);
+                return Ok(result);
             }
             catch (ApplicationException ex)
             {

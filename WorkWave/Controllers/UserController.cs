@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using WorkWave.DBModels;
 using WorkWave.Dtos.JobOpeningDtos;
 using WorkWave.Dtos.JobTypeDtos;
 using WorkWave.Dtos.UserDtos;
+using WorkWave.Filters;
 using WorkWave.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -36,12 +38,13 @@ namespace WorkWave.Controllers
             _configuration = configuration;
         }
 
-
+        [AllowAnonymous]
         [HttpPost("registerEmployer")]
         public async Task<ActionResult> RegisterEmployer(EmployerRegistrationDto model)
         {
-      
-                User newUser = _mapper.Map<User>(model);
+            var roleExists =await _roleService.RoleExistsAsync("employer");
+            if(!roleExists) BadRequest("Role doesnt exist");
+            User newUser = _mapper.Map<User>(model);
                 Employer employer = _mapper.Map<Employer>(model);
                 newUser.Role = RoleName.Employer;
                 newUser.EmployerProfile = employer;
@@ -58,9 +61,12 @@ namespace WorkWave.Controllers
             
         }
 
+        [AllowAnonymous]
         [HttpPost("registerJobSeeker")]
         public async Task<ActionResult> RegisterJobSeeker(JobSeekerRegistrationDto model)
         {
+            var roleExists = await _roleService.RoleExistsAsync("jobseeker");
+            if (!roleExists) BadRequest("Role doesnt exist");
             User newUser = _mapper.Map<User>(model);
             JobSeeker jobSeeker = _mapper.Map<JobSeeker>(model);
             newUser.Role = RoleName.JobSeeker;
@@ -75,17 +81,19 @@ namespace WorkWave.Controllers
 
         }
 
+        [Authorize]
+        [RoleFilter("admin")]
         [HttpPost("registerUser")]
-        public async Task<ActionResult> RegisterUser(UserRegistrationDto model, string Role)
+        public async Task<ActionResult> RegisterAdmin(UserRegistrationDto model)
         {
+            var roleExists = await _roleService.RoleExistsAsync("jobseeker");
+            if (!roleExists) BadRequest("Role doesnt exist");
             User newUser = _mapper.Map<User>(model);
-            var roleExist= await _roleService.RoleExistsAsync(Role);
-            if(!roleExist) { return BadRequest("Role doesn't exist"); }
-            newUser.Role = Role;
+            newUser.Role = "admin";
             var user = await _service.CreateUser(newUser, model.Password);
             if (user.Succeeded)
             {
-                await _roleService.AddRoleToUser(newUser, Role);
+                await _roleService.AddRoleToUser(newUser, "admin");
                 return Ok("user added");
             }
             else return BadRequest(user.Errors);
@@ -93,6 +101,7 @@ namespace WorkWave.Controllers
         }
 
         [HttpPost("changePassword")]
+        [Authorize]
         public async Task<ActionResult> ChangePassword(UserChangePasswordDto model)
         {
             string userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
@@ -106,6 +115,7 @@ namespace WorkWave.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult> Login(UserLoginDto model)
         {
             var user = await _service.Login(model.Username, model.Password);

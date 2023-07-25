@@ -38,6 +38,7 @@ namespace WorkWave.Controllers
         // GET: api/<JobOpeningController>
        
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<JobOpeningDto>>> GetAll()
         {
             var jobOpenings= await _service.GetAll();
@@ -51,7 +52,7 @@ namespace WorkWave.Controllers
 
         // GET api/<JobOpeningController>/5
         [HttpGet("{id}")]
-
+        [AllowAnonymous]
         public async Task<ActionResult<JobOpeningResponseDto>> Get(int id)
         {
             var jobOpening = await _service.GetById(id);
@@ -88,6 +89,7 @@ namespace WorkWave.Controllers
         }
 
         // POST api/<JobOpeningController>
+        [Authorize]
         [HttpPost]
         [RoleFilter("Employer")]
         public async Task<ActionResult<JobOpeningResponseDto>> Post(JobOpeningAddDto jobOpeningAddDto)
@@ -95,6 +97,7 @@ namespace WorkWave.Controllers
             try
             {
                 string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if(userId == null) { return Unauthorized(); }
                 var user = await _employerService.GetEmployerByUserId(int.Parse(userId));
                 // Map the DTO to the entity model
                 var jobOpening = _mapper.Map<JobOpening>(jobOpeningAddDto);
@@ -109,7 +112,7 @@ namespace WorkWave.Controllers
                     })
                     .ToList();
                 }
-                jobOpening.JobDetails = new JobDetails()
+                var jobDetails = new JobDetails()
                 {
                     EmploymentType = jobOpeningAddDto.EmploymentType,
                     ApplicationDeadline = jobOpeningAddDto.ApplicationDeadline,
@@ -122,6 +125,8 @@ namespace WorkWave.Controllers
                     IsFullTime = jobOpeningAddDto.IsFullTime,
                     IsRemote = jobOpeningAddDto.IsRemote
                 };
+                jobOpening.JobDetails = jobDetails;
+                jobDetails.JobOpening = jobOpening;
                 var createdJobOpening = await _service.Add(jobOpening);
 
                 var JobOpeningResponseDto = new JobOpeningResponseDto()
@@ -150,7 +155,6 @@ namespace WorkWave.Controllers
                     IsRemote = createdJobOpening.JobDetails.IsRemote,
                 };
                 return Ok(JobOpeningResponseDto);
-                return Ok(createdJobOpening);
             }
             catch (ApplicationException ex)
             {
@@ -158,8 +162,10 @@ namespace WorkWave.Controllers
             }
         }
 
-            // PUT api/<JobOpeningController>/5
-            [HttpPut("{id}")]
+        // PUT api/<JobOpeningController>/5
+        [Authorize]
+        [RoleFilter("Employer")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<JobOpeningDto>> Put(int id, [FromBody] JobOpeningUpdateDto JobOpeningDto)
         {
             try
@@ -183,6 +189,8 @@ namespace WorkWave.Controllers
 
         // DELETE api/<JobOpeningController>/5
         [HttpDelete("{id}")]
+        [Authorize]
+        [RoleFilter("Employer")]
         public async Task<IActionResult> Delete(int id)
         {
             try

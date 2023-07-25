@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using WorkWave.Constants;
 
 namespace WorkWave.DBModels
 {
@@ -14,5 +15,7 @@ namespace WorkWave.DBModels
         public JobSeeker JobSeeker { get; set; }
         public int JobOpeningId { get; set; }
         public JobOpening JobOpening { get; set; }
+
+        public Status Status { get;set; } = Status.Pending;
     }
 }

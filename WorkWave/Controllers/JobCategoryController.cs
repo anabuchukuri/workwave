@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkWave.DbModels;
 using WorkWave.DBModels;
 using WorkWave.Dtos.JobCategoryDtos;
 using WorkWave.Dtos.JobOpeningDtos;
+using WorkWave.Filters;
 using WorkWave.Services;
 using WorkWave.Services.Abstracts;
 
@@ -29,6 +31,7 @@ namespace WorkWave.Controllers
 
         // GET: api/<JobCategoryController>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<JobCategoryDto>>> GetAll()
         {
             var jobCategories = await _service.GetAll();
@@ -42,6 +45,7 @@ namespace WorkWave.Controllers
 
         // GET api/<JobCategoryController>/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<JobCategoryDto>> Get(int id)
         {
             var jobCategory = await _service.GetById(id);
@@ -55,6 +59,8 @@ namespace WorkWave.Controllers
 
         // POST api/<JobCategoryController>
         [HttpPost]
+        [Authorize]
+        [RoleFilter("admin")]
         public async Task<ActionResult<JobCategoryDto>> Post(JobCategoryAddDto jobCategoryAddDto)
         {
             // Map the DTO to the entity model
@@ -73,6 +79,8 @@ namespace WorkWave.Controllers
 
             // PUT api/<JobCategoryController>/5
             [HttpPut("{id}")]
+        [Authorize]
+        [RoleFilter("admin")]
         public async Task<ActionResult<JobCategoryDto>> Put(int id, [FromBody] JobCategoryAddDto JobCategoryDto)
         {
             var existingJobCategory = await _service.GetById(id);
@@ -95,6 +103,8 @@ namespace WorkWave.Controllers
 
         // DELETE api/<JobCategoryController>/5
         [HttpDelete("{id}")]
+        [Authorize]
+        [RoleFilter("admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
