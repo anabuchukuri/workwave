@@ -12,8 +12,8 @@ using WorkWave.DbModels;
 namespace WorkWave.Migrations
 {
     [DbContext(typeof(WorkwaveContext))]
-    [Migration("20230724115142_seedcategory")]
-    partial class seedcategory
+    [Migration("20230726172845_reinitiate")]
+    partial class reinitiate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -195,6 +195,9 @@ namespace WorkWave.Migrations
 
                     b.Property<string>("References")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("ApplicationId");
 
@@ -447,7 +450,7 @@ namespace WorkWave.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "722954d9-58d1-4a29-a671-6bea84d2d034",
+                            ConcurrencyStamp = "dfa4f92b-edf3-4b46-b870-203cc2d93bf3",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -544,14 +547,15 @@ namespace WorkWave.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dfefa1e5-c482-4f35-9fdd-ac90549830df",
+                            ConcurrencyStamp = "37e67f80-a85a-4608-8ce8-cc653986ded3",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMSCmZaQr3eBJED+uZzJmipzKBOlUsdlbPOIJD6koE8wCmwoY5HdyxQ5hC8s+V7eNw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAxZrLtfsbwravtyMFX0RJrKChUEyUznyCY27efJJc2Iuo01Ja/AMnMG/tCNTMQhdg==",
                             PhoneNumberConfirmed = false,
                             Role = "admin",
+                            SecurityStamp = "9e690791-3326-40b2-b986-87f21128788b",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

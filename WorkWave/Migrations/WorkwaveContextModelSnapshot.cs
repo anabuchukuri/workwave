@@ -447,7 +447,7 @@ namespace WorkWave.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "0cbcd0ec-7875-40f5-84ff-83cdeaa95c39",
+                            ConcurrencyStamp = "dfa4f92b-edf3-4b46-b870-203cc2d93bf3",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -544,15 +544,15 @@ namespace WorkWave.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7b8178d5-5d75-4fe4-b757-197e8cc6dfdb",
+                            ConcurrencyStamp = "37e67f80-a85a-4608-8ce8-cc653986ded3",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEEebugqWkTtPm+4mM3IIe/veRwOli3XWoooxnBTuu8TLDHJK0PwXMHDGk73r8+bLMw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAxZrLtfsbwravtyMFX0RJrKChUEyUznyCY27efJJc2Iuo01Ja/AMnMG/tCNTMQhdg==",
                             PhoneNumberConfirmed = false,
                             Role = "admin",
-                            SecurityStamp = "028457b3-f755-45fe-b85e-070c8141e9a0",
+                            SecurityStamp = "9e690791-3326-40b2-b986-87f21128788b",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

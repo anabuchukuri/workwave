@@ -71,6 +71,9 @@ namespace WorkWave.Dtos
 
             CreateMap<JobApplication, JobApplicationDto>();
             CreateMap<JobApplicationDto, JobApplication>();
+
+            CreateMap<JobApplicationDto, JobApplicationGetDto>();
+            CreateMap<JobApplicationGetDto, JobApplicationDto>();
         }
     }
 }

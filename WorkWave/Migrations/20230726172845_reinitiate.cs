@@ -278,7 +278,8 @@ namespace WorkWave.Migrations
                     References = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobSpecificCV = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobSeekerId = table.Column<int>(type: "int", nullable: false),
-                    JobOpeningId = table.Column<int>(type: "int", nullable: false)
+                    JobOpeningId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -351,12 +352,22 @@ namespace WorkWave.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { 1, "7749dcea-cf8a-4359-94d8-ddb99521f55c", "admin", "ADMIN" });
+                values: new object[] { 1, "dfa4f92b-edf3-4b46-b870-203cc2d93bf3", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "EmployerId", "JobSeekerId", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "7f04a0d9-aa17-40f1-8d96-fc98a6000ed1", "admin@gmail.com", true, null, null, false, null, null, "ADMIN", "AQAAAAEAACcQAAAAEODHtoeO3U1m2MzUfxajIATUjc591MZluQbohO4nVFzmjOmISp9R9e1EzYgnRvaxUg==", null, false, "admin", null, false, "admin" });
+                values: new object[] { 1, 0, "37e67f80-a85a-4608-8ce8-cc653986ded3", "admin@gmail.com", true, null, null, false, null, null, "ADMIN", "AQAAAAEAACcQAAAAEAxZrLtfsbwravtyMFX0RJrKChUEyUznyCY27efJJc2Iuo01Ja/AMnMG/tCNTMQhdg==", null, false, "admin", "9e690791-3326-40b2-b986-87f21128788b", false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "JobCategory",
+                columns: new[] { "JobCategoryId", "Name" },
+                values: new object[] { 1, "Sales" });
+
+            migrationBuilder.InsertData(
+                table: "JobType",
+                columns: new[] { "JobTypeId", "Name" },
+                values: new object[] { 1, "Full-Time" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

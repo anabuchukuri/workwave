@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 using WorkWave.Constants;
 using WorkWave.DBModels;
@@ -39,7 +40,7 @@ namespace WorkWave.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<JobApplicationAddDto>>> GetAll()
+        public async Task<ActionResult<List<JobApplicationDto>>> GetAll()
         {
             var jobApplication = await _service.GetAll();
             if (jobApplication.Count == 0)
@@ -66,7 +67,7 @@ namespace WorkWave.Controllers
         [HttpPost]
         [Authorize]
         [RoleFilter("jobseeker")]
-        public async Task<ActionResult<JobApplication>> Post(JobApplicationAddDto jobApplicationAddDto)
+        public async Task<ActionResult<JobApplicationDto>> Post(JobApplicationAddDto jobApplicationAddDto)
         {
             try
             {
@@ -78,7 +79,8 @@ namespace WorkWave.Controllers
                 jobApplication.ApplicationDate = DateTime.Now;
 
                 var createdJobApplication = await _service.Add(jobApplication);
-                return Ok(createdJobApplication);
+                var jobApplicationDto = _mapper.Map<JobApplicationDto>(createdJobApplication);
+                return Ok(jobApplicationDto);
             }
             catch (ApplicationException ex)
             {
@@ -89,13 +91,21 @@ namespace WorkWave.Controllers
         [HttpPut("{id}")]
         [Authorize]
         [RoleFilter("jobseeker")]
-        public async Task<ActionResult<JobApplicationDto>> Put(int id, [FromBody] JobApplicationDto JobApplicationDto)
+        public async Task<ActionResult<JobApplicationDto>> Put(int id, [FromBody] JobApplicationAddDto JobApplicationDto)
         {
+            string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _seekerService.GetSeekerByUserId(int.Parse(userId));
+            
             var existingJobApplication = await _service.GetById(id);
             if (existingJobApplication == null)
             {
                 return NotFound();
             }
+            if (user.JobSeekerId != existingJobApplication.JobSeekerId)
+            {
+                return Unauthorized();
+            }
+            
             _mapper.Map(JobApplicationDto, existingJobApplication);
             try
             {
@@ -117,6 +127,19 @@ namespace WorkWave.Controllers
         {
             try
             {
+                string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _seekerService.GetSeekerByUserId(int.Parse(userId));
+
+                var existingJobApplication = await _service.GetById(id);
+                if (existingJobApplication == null)
+                {
+                    return NotFound();
+                }
+                if (user.JobSeekerId != existingJobApplication.JobSeekerId)
+                {
+                    return Unauthorized();
+                }
+
                 await _service.Delete(id);
                 return Ok("job application deleted");
             }
@@ -128,15 +151,18 @@ namespace WorkWave.Controllers
 
 
 
-        [HttpGet("getOwnApplications/{EmployerId}")]
+        [HttpGet("GetApplicationsForEmployer")]
         [Authorize]
         [RoleFilter("Employer")]
-        public async Task<IActionResult> GetApplicationsForEmployer(int id, Status status)
+        public async Task<IActionResult> GetApplicationsForEmployer( Status status)
         {
             try
             {
-                var employer = await _employerService.GetEmployerById(id);
-
+                string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) return NotFound("Employer not fount");
+                var user = await _employerService.GetEmployerByUserId(int.Parse(userId));
+                if (user == null || user.EmployerId == null) return NotFound("Employer not fount");
+                var employer = user.EmployerProfile;
                 // Check if the employer exists
                 if (employer == null)
                 {
@@ -144,9 +170,9 @@ namespace WorkWave.Controllers
                 }
 
                 // Retrieve job applications for the specific employer and with the given status
-                var jobApplications = await _service.GetApplicationsForEmployer(id, status);
-
-                return Ok(jobApplications);
+                var jobApplications = await _service.GetApplicationsForEmployer((int)user.EmployerId, status);
+                var dto = _mapper.Map<List<JobApplicationDto>>(jobApplications);
+                return Ok(dto);
             }
             catch (ApplicationException ex)
             {
@@ -162,13 +188,20 @@ namespace WorkWave.Controllers
             try
             {
                 string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var jobApplications = await _service.GetApplicationsForEmployer(int.Parse(userId), status);
+                if (userId == null) return NotFound("Employer not fount");
+                var user= await _employerService.GetEmployerByUserId(int.Parse(userId));
+                if(user==null || user.EmployerId==null) return NotFound("Employer not fount");
+                var jobApplications = await _service.GetApplicationsForEmployer((int)user.EmployerId, null);
                 JobApplication application = jobApplications.Find(job => job.ApplicationId == id);
                 if (application == null) return NotFound("user's application not found");
-                int count = await _jobOpeningService.checkAvailableOpenings(id);
-                if (count == 0) NotFound("maximum number of applicants has been reached");
+                if (status == Status.Accepted)
+                {
+                    int count = await _jobOpeningService.checkAvailableOpenings(application.JobOpeningId);
+                    if (count == 0) return NotFound("maximum number of applicants has been reached");
+                }
                 var result = await _service.ChangeApplicationStatus(id, status);
-                return Ok(result);
+                var dto = _mapper.Map<JobApplicationDto>(result);
+                return Ok(dto);
             }
             catch (ApplicationException ex)
             {

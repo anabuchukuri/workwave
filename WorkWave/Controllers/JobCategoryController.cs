@@ -78,7 +78,7 @@ namespace WorkWave.Controllers
         }
 
             // PUT api/<JobCategoryController>/5
-            [HttpPut("{id}")]
+        [HttpPut("{id}")]
         [Authorize]
         [RoleFilter("admin")]
         public async Task<ActionResult<JobCategoryDto>> Put(int id, [FromBody] JobCategoryAddDto JobCategoryDto)

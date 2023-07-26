@@ -39,14 +39,38 @@ namespace WorkWave.Controllers
        
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<JobOpeningDto>>> GetAll()
+        public async Task<ActionResult<List<JobOpeningResponseDto>>> GetAll()
         {
             var jobOpenings= await _service.GetAll();
             if (jobOpenings.Count == 0)
             {
                 return NoContent(); 
             }
-            var jobOpeningDtos = _mapper.Map<List<JobOpeningDto>>(jobOpenings);
+            var jobOpeningDtos= jobOpenings.ConvertAll(jobOpening => new JobOpeningResponseDto()
+            {
+                JobOpeningId = jobOpening.JobOpeningId,
+                Title = jobOpening.Title,
+                Description = jobOpening.Description,
+                Location = jobOpening.Location,
+                Salary = jobOpening.Salary,
+                IsActive = jobOpening.IsActive,
+                CreationDate = jobOpening.CreationDate,
+                EmployerId = jobOpening.EmployerId,
+                EmployerCompanyName = jobOpening.Employer.CompanyName,
+                EmployercontactNumber = jobOpening.Employer.ContactNumber,
+                AuthorUserId = jobOpening.Employer.User.Id,
+                JobDetailsId = jobOpening.JobDetails.JobDetailsId,
+                EmploymentType = jobOpening.JobDetails.EmploymentType,
+                ApplicationDeadline = jobOpening.JobDetails.ApplicationDeadline,
+                RequiredExperience = jobOpening.JobDetails.RequiredExperience,
+                Qualifications = jobOpening.JobDetails.Qualifications,
+                Responsibilities = jobOpening.JobDetails.Responsibilities,
+                CompanyCulture = jobOpening.JobDetails.CompanyCulture,
+                ApplicationInstructions = jobOpening.JobDetails.ApplicationInstructions,
+                NumberOfOpenings = jobOpening.JobDetails.NumberOfOpenings,
+                IsFullTime = jobOpening.JobDetails.IsFullTime,
+                IsRemote = jobOpening.JobDetails.IsRemote,
+            });
             return Ok(jobOpeningDtos);
         }
 
@@ -170,11 +194,16 @@ namespace WorkWave.Controllers
         {
             try
             {
+                string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) { return Unauthorized(); }
+                var user = await _employerService.GetEmployerByUserId(int.Parse(userId));
+                
                 var existingJobOpening = await _service.GetById(id);
                 if (existingJobOpening == null)
                 {
                     return NotFound();
                 }
+                if (existingJobOpening.EmployerId!= user.EmployerId) { return Unauthorized(); }
                  _mapper.Map(JobOpeningDto, existingJobOpening);
             
                 var updatedJobOpening = await _service.Update(existingJobOpening);
@@ -195,6 +224,15 @@ namespace WorkWave.Controllers
         {
             try
             {
+                string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) { return Unauthorized(); }
+                var user = await _employerService.GetEmployerByUserId(int.Parse(userId));
+                var existingJobOpening = await _service.GetById(id);
+                if (existingJobOpening == null)
+                {
+                    return NotFound();
+                }
+                if (existingJobOpening.EmployerId != user.EmployerId) { return Unauthorized(); }
                 await _service.Delete(id);
                 return NoContent();
             }

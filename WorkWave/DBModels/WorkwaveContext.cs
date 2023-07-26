@@ -85,9 +85,11 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
             .WithOne(oc => oc.JobOpening)
             .HasForeignKey(oc => oc.JobOpeningId).IsRequired(false);
 
+        /*"opeming"*/
         builder.HasMany(jo => jo.JobApplications)
             .WithOne(ja => ja.JobOpening)
             .HasForeignKey(ja => ja.JobOpeningId).IsRequired(false);
+       
     }
 
 
@@ -160,9 +162,12 @@ public partial class WorkwaveContext : IdentityDbContext<User, Role, int>
             .WithMany(js => js.JobApplications)
             .HasForeignKey(ja => ja.JobSeekerId);
 
-        builder.HasOne(ja => ja.JobOpening)
+
+       /* builder.HasOne(ja => ja.JobOpening)
             .WithMany(jo => jo.JobApplications)
-            .HasForeignKey(ja => ja.JobOpeningId);
+            .HasForeignKey(ja => ja.JobOpeningId);*/
+
+       
     }
 
     private void ConfigureOpeningCategory(EntityTypeBuilder<OpeningCategory> builder)

@@ -93,9 +93,11 @@ namespace WorkWave.Services
             return await _context.JobApplication.FirstOrDefaultAsync(jo => jo.ApplicationId == id); ;
         }
 
-        public async Task<List<JobApplication>> GetApplicationsForEmployer(int id, Status status)
+        public async Task<List<JobApplication>> GetApplicationsForEmployer(int id, Status? status)
         {
             var employer = await _context.Employer
+           .Include(e => e.JobOpenings)
+           .ThenInclude(jo => jo.JobDetails)
            .Include(e => e.JobOpenings)
            .ThenInclude(jo => jo.JobApplications)
            .FirstOrDefaultAsync(e => e.EmployerId == id);

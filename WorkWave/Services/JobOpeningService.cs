@@ -24,7 +24,7 @@ namespace WorkWave.Services
                 await _context.SaveChangesAsync();
                 return item;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while adding the JobOpening. " + ex.Message);
             }
@@ -38,6 +38,17 @@ namespace WorkWave.Services
                 throw new ApplicationException($"JobOpening with ID {id} not found.");
             }
 
+            var openingCategoriesToDelete =  _context.OpeningCategory
+        .Where(oc => oc.JobOpeningId == id)
+        .ToList();
+            _context.OpeningCategory.RemoveRange(openingCategoriesToDelete);
+
+            var applications = _context.JobApplication
+        .Where(oc => oc.JobOpeningId == id)
+        .ToList();
+            _context.JobApplication.RemoveRange(applications);
+
+            _context.JobOpening.Attach(jobOpening);
             _context.JobOpening.Remove(jobOpening);
             await _context.SaveChangesAsync();
         }
@@ -63,7 +74,7 @@ namespace WorkWave.Services
 
         public async Task<List<JobOpening>> GetAll()
         {
-                return await _context.JobOpening
+                return await _context.JobOpening.Include(e => e.JobDetails).Include(e => e.Employer).ThenInclude(e => e.User)
                     .ToListAsync();
         }
 

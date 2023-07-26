@@ -43,12 +43,12 @@ namespace WorkWave.Controllers
         public async Task<ActionResult> RegisterEmployer(EmployerRegistrationDto model)
         {
             var roleExists =await _roleService.RoleExistsAsync("employer");
-            if(!roleExists) BadRequest("Role doesnt exist");
+            if(!roleExists) return BadRequest("Role doesnt exist");
             User newUser = _mapper.Map<User>(model);
                 Employer employer = _mapper.Map<Employer>(model);
                 newUser.Role = RoleName.Employer;
                 newUser.EmployerProfile = employer;
-                var user = await _service.CreateUser(newUser, model.Password);
+            var user = await _service.CreateUser(newUser, model.Password);
                 await _roleService.AddRoleToUser(newUser, newUser.Role);
                 if (user.Succeeded)
                 {
@@ -66,28 +66,27 @@ namespace WorkWave.Controllers
         public async Task<ActionResult> RegisterJobSeeker(JobSeekerRegistrationDto model)
         {
             var roleExists = await _roleService.RoleExistsAsync("jobseeker");
-            if (!roleExists) BadRequest("Role doesnt exist");
+            if (!roleExists) return BadRequest("Role doesnt exist");
             User newUser = _mapper.Map<User>(model);
             JobSeeker jobSeeker = _mapper.Map<JobSeeker>(model);
             newUser.Role = RoleName.JobSeeker;
             newUser.JobSeekerProfile = jobSeeker;
             var user = await _service.CreateUser(newUser, model.Password);
-            await _roleService.AddRoleToUser(newUser, newUser.Role);
             if (user.Succeeded)
             {
-                return Ok("user JobSeeker added"); 
+                await _roleService.AddRoleToUser(newUser, newUser.Role);
+                return Ok("user JobSeeker added");
             }
-            else  return BadRequest(user.Errors);
-
+            else return BadRequest(user.Errors);
         }
 
         [Authorize]
         [RoleFilter("admin")]
-        [HttpPost("registerUser")]
+        [HttpPost("RegisterAdmin")]
         public async Task<ActionResult> RegisterAdmin(UserRegistrationDto model)
         {
-            var roleExists = await _roleService.RoleExistsAsync("jobseeker");
-            if (!roleExists) BadRequest("Role doesnt exist");
+            var roleExists = await _roleService.RoleExistsAsync("admin");
+            if (!roleExists) return BadRequest("Role doesnt exist");
             User newUser = _mapper.Map<User>(model);
             newUser.Role = "admin";
             var user = await _service.CreateUser(newUser, model.Password);
