@@ -27,7 +27,6 @@ builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<JobSeekerService>();
 builder.Services.AddScoped<EmployerService>();
 builder.Services.AddScoped<JobApplicationService>();
-builder.Services.AddTransient<EmailService>();
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
